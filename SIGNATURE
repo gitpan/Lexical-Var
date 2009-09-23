@@ -1,0 +1,51 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.55.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 9509770e255da80ee243c16964ea0a451de0bbe9 .cvsignore
+SHA1 90f8cd221e2157cab232e53363eb81e2938c495d Build.PL
+SHA1 20d5033e70c562eb746ecd1b894bfaa330fc182b Changes
+SHA1 b0ef35af84a46e5f7c649cba4169460302720b3f MANIFEST
+SHA1 4fdde63ea85d2d8323fbcb22101e8c89820657aa META.yml
+SHA1 03ca4c31718c988ce270137fae767cd4bc2eb33d Makefile.PL
+SHA1 83478df9a76e4119731f1cc129141fedf67a2625 README
+SHA1 7d8cdcfe8bfcce581e89db9e335dc28491ba1275 lib/Lexical/.cvsignore
+SHA1 898d16f7c0fc5e189c01e26a2d2d933bde9bc7a4 lib/Lexical/Sub.pm
+SHA1 3d0ea4458ec1d343987ade1d07945eeab395bcb5 lib/Lexical/Var.pm
+SHA1 3d027a5df45308c7d7ef7d2e56b90c4386ba24e3 lib/Lexical/Var.xs
+SHA1 a6cd5f901a503725914797d5de480d273284445a t/code.t
+SHA1 b77592056c0eb1627a2eadcfd14ec49e6f98609c t/code_0.pm
+SHA1 fb4de8af68a858176ba2ad1f43ac86f3af383ec0 t/code_1.pm
+SHA1 53219d481b83de70ef66cac5e21488a731a96420 t/code_2.pm
+SHA1 716352815b6196af50f29868d8cbdb9e945f697e t/code_3.pm
+SHA1 31356e0540b696cfbaca328e598e50283e0009fc t/code_4.pm
+SHA1 d3edcf44b510808a1e117bb1e58552cb58dbc184 t/once.t
+SHA1 0e141eecf3ca4903ef38d9413b5403a9ddb0392f t/pod_cvg.t
+SHA1 74a957cd8b93f25672ecc6aa578a671d084dd343 t/pod_syn.t
+SHA1 05e19a3bfb96c33e7a4e62a051352e7e3b36025a t/scalar.t
+SHA1 c683d9b6b1d4f3a207f4cbeff67e4be60c4187e5 t/scalar_0.pm
+SHA1 9c9ca0731ddb0d4278a9834c36c09548e2d945c8 t/scalar_0n.pm
+SHA1 14d28314e46fabb424f7783d3ab59e217c6d6581 t/scalar_1.pm
+SHA1 b8739d4cc37d521f75778ae5c4e9c9dd9837453d t/scalar_2.pm
+SHA1 100db668daa0c393a5ac9dbd2d82396c612e773f t/scalar_3.pm
+SHA1 768295f751ce394aa9596c1fcb5365beaddfaf30 t/scalar_4.pm
+SHA1 c1ec53a6228ecbd90700027b0e1e4722699006c6 t/scalar_4n.pm
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkq6mfUACgkQOV9mt2VyAVG/+QCgjo149M9bbCq9/tqil3I+hzk7
+ai4Anj3trabdJ1Nv6qSyJDhhYYftI7c6
+=lSvN
+-----END PGP SIGNATURE-----

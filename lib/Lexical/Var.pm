@@ -1,0 +1,137 @@
+=head1 NAME
+
+Lexical::Var - static variables without namespace pollution
+
+=head1 SYNOPSIS
+
+	use Lexical::Var '$foo' => \$Remote::foo;
+	use Lexical::Var '$const' => \123;
+	use Lexical::Var '@bar' => [];
+	use Lexical::Var '%baz' => { a => 1, b => 2 };
+	use Lexical::Var '&quux' => sub { $_[0] + 1 };
+	use Lexical::Var '*wibble' => Symbol::gensym();
+
+=head1 DESCRIPTION
+
+This module implements lexical scoping of static variables and
+subroutines.  Although it can be used directly, it is mainly intended
+to be infrastructure for modules that export particular objects.
+
+This module influences the meaning of single-part variable names that
+appear directly in code, such as "C<$foo>".  Normally, in the absence
+of any particular declaration, or under the effect of an C<our>
+declaration, this would refer to the scalar variable of that name
+located in the current package.  A C<Lexical::Var> declaration can
+change this to refer to any particular scalar, bypassing the package
+system entirely.  A variable name that includes an explicit package part,
+such as "C<$main::foo>", always refers to the variable in the specified
+package, and is unaffected by this module.  A symbolic reference through
+a string value, such as "C<${'foo'}>", also looks in the package system,
+and so is unaffected by this module.
+
+The types of name that can be influenced are scalar ("C<$foo>"),
+array ("C<@foo>"), hash ("C<%foo>"), subroutine ("C<&foo>"), and glob
+("C<*foo>").  A definition for any of these names also affects code
+that logically refers to the same entity, even when the name is spelled
+without its usual sigil.  For example, any definition of "C<@foo>" affects
+element references such as "C<$foo[0]>".  Barewords in filehandle context
+actually refer to the glob variable.  Bareword references to subroutines
+cannot currently be handled by this module.
+
+A name definition supplied by this module takes effect from the end of the
+definition statement up to the end of the immediately enclosing block,
+except where it is shadowed within a nested block.  This is the same
+lexical scoping that the C<my>, C<our>, and C<state> keywords supply.
+Definitions from L<Lexical::Var> and from C<my>/C<our>/C<state> can shadow
+each other.  These lexical definitions propagate into string C<eval>s.
+
+This module only manages variables of static duration (the kind of
+duration that C<our> and C<state> variables have).  To get a fresh
+variable for each invocation of a function, use C<my>.
+
+=cut
+
+package Lexical::Var;
+
+use warnings;
+use strict;
+
+use Lexical::SealRequireHints 0.000;
+
+our $VERSION = "0.000";
+
+require XSLoader;
+XSLoader::load(__PACKAGE__, $VERSION);
+
+=head1 PACKAGE METHODS
+
+These methods are meant to be invoked on the C<Lexical::Var> package.
+
+=over
+
+=item Lexical::Var->import(NAME => REF, ...)
+
+Sets up lexical variable declarations, in the lexical environment that
+is currently compiling.  Each I<NAME> must be a variable name (e.g.,
+"B<$foo>") including sigil, and each I<REF> must be a reference to a
+variable/value of the appropriate type.  The name is lexically associated
+with the referenced variable/value.
+
+=item Lexical::Var->unimport(NAME [=> REF], ...)
+
+Sets up negative lexical variable declarations, in the lexical environment
+that is currently compiling.  Each I<NAME> must be a variable name
+(e.g., "B<$foo>") including sigil.  If the name is given on its own,
+it is lexically dissociated from any value.  Within the resulting scope,
+the variable name will not be recognised.  If a I<REF> (which must be a
+reference to a value of the appropriate type) is specified with a name,
+the name will be dissociated if and only if it is currently associated
+with that value.
+
+=back
+
+=head1 BUGS
+
+Subroutine invocations without the C<&> sigil cannot be correctly
+processed by this module.  This is because the parser needs to look up
+the subroutine early, in order to let any prototype affect parsing,
+and it looks up the subroutine by a different mechanism than is used
+to generate the call op.  (Some forms of sigilless call have other
+complications of a similar nature.)  The early lookup is harder to
+intercept, and fixing this will probably require changes to the Perl core.
+If an attempt is made to call a lexical subroutine via a bareword, this
+module will probably still be able to intercept the call op, and will
+throw an exception to indicate that the parsing has gone wrong.  However,
+in some cases compilation goes further wrong before this module can catch
+it, resulting in either a confusing parse error or (in rare situations)
+silent compilation to an incorrect op sequence.
+
+Bogus redefinition warnings occur in some cases when C<our> declarations
+and C<Lexical::Var> declarations shadow each other.
+
+Package hash entries get created for subroutine and glob names that
+are used, even though the subroutines and globs are not actually being
+stored or looked up in the package.  This can occasionally result in a
+"used only once" warning failing to occur when it should.
+
+=head1 SEE ALSO
+
+L<Attribute::Lexical>,
+L<Lexical::Sub>
+
+=head1 AUTHOR
+
+Andrew Main (Zefram) <zefram@fysh.org>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2009 Andrew Main (Zefram) <zefram@fysh.org>
+
+=head1 LICENSE
+
+This module is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
+
+1;
