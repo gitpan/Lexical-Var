@@ -33,7 +33,8 @@ of the definition statement up to the end of the immediately enclosing
 block, except where it is shadowed within a nested block.  This is the
 same lexical scoping that the "my", "our", and "state" keywords supply.
 Definitions from Lexical::Var and from "my"/"our"/"state" can shadow
-each other.  These lexical definitions propagate into string "eval"s.
+each other.  These lexical definitions propagate into string "eval"s,
+on Perl versions that support it (5.9.3 and later).
 
 This module only manages variables of static duration (the kind of
 duration that "our" and "state" variables have).  To get a fresh variable

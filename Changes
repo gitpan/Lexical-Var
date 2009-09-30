@@ -1,3 +1,31 @@
+version 0.001; 2009-09-30
+
+  * bugfix: make array and hash indexing work
+
+  * bugfix: avoid core checks that would reject use of a glob as a
+    scalar value
+
+  * bugfix: avoid modifying the reference stored in the hint hash (which
+    happened through reusing it in const ops)
+
+  * bugfix: repair a reference leak in unimportation
+
+  * bugfix: change a memNE() to strnNE(), to avoid reading off the end
+    of a string
+
+  * bugfix: require bugfixed version of Lexical::SealRequireHints (for
+    fixes around usability of its pure-Perl implementation)
+
+  * port to pre-5.10 Perls
+
+  * more tests: Lexical::Sub, array and hash variables, glob variables,
+    acceptability of value types for references to lexical variables,
+    erroneous invocation of import and unimport
+
+  * in XS, add some casts to avoid compiler warnings
+
+  * check for required Perl version at runtime
+
 version 0.000; 2009-09-23
 
   * initial released version

@@ -43,7 +43,8 @@ definition statement up to the end of the immediately enclosing block,
 except where it is shadowed within a nested block.  This is the same
 lexical scoping that the C<my>, C<our>, and C<state> keywords supply.
 Definitions from L<Lexical::Var> and from C<my>/C<our>/C<state> can shadow
-each other.  These lexical definitions propagate into string C<eval>s.
+each other.  These lexical definitions propagate into string C<eval>s,
+on Perl versions that support it (5.9.3 and later).
 
 This module only manages variables of static duration (the kind of
 duration that C<our> and C<state> variables have).  To get a fresh
@@ -53,12 +54,13 @@ variable for each invocation of a function, use C<my>.
 
 package Lexical::Var;
 
+{ use 5.006; }
 use warnings;
 use strict;
 
-use Lexical::SealRequireHints 0.000;
+use Lexical::SealRequireHints 0.001;
 
-our $VERSION = "0.000";
+our $VERSION = "0.001";
 
 require XSLoader;
 XSLoader::load(__PACKAGE__, $VERSION);

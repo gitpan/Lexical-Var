@@ -32,7 +32,8 @@ A name definition supplied by this module takes effect from the end of the
 definition statement up to the end of the immediately enclosing block,
 except where it is shadowed within a nested block.  This is the same
 lexical scoping that the C<my>, C<our>, and C<state> keywords supply.
-These lexical definitions propagate into string C<eval>s.
+These lexical definitions propagate into string C<eval>s, on Perl versions
+that support it (5.9.3 and later).
 
 This module is implemented through the mechanism of L<Lexical::Var>.
 Its distinct name and declaration syntax exist to make lexical subroutine
@@ -42,10 +43,11 @@ declarations clearer.
 
 package Lexical::Sub;
 
+{ use 5.006; }
 use warnings;
 use strict;
 
-our $VERSION = "0.000";
+our $VERSION = "0.001";
 
 require Lexical::Var;
 die "mismatched versions of Lexical::Var and Lexical::Sub modules"

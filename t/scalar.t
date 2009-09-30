@@ -1,12 +1,14 @@
 use warnings;
 use strict;
 
-use Test::More tests => 96;
+use Test::More tests => 104;
 
 BEGIN { $^H |= 0x20000 if $] < 5.008; }
 
 $SIG{__WARN__} = sub {
 	return if $_[0] =~ /\AVariable \"\$foo\" is not imported /;
+	return if $_[0] =~ /\AAttempt to free unreferenced scalar[ :]/ &&
+		$] < 5.008004;
 	die "WARNING: $_[0]";
 };
 
@@ -38,6 +40,23 @@ eval q{use Lexical::Var '$foo' => sub{};};
 isnt $@, "";
 eval q{use Lexical::Var '$foo' => bless(sub{});};
 isnt $@, "";
+
+eval q{use Lexical::Var '$foo' => \undef; $foo if 0;};
+is $@, "";
+eval q{use Lexical::Var '$foo' => \1; $foo if 0;};
+is $@, "";
+eval q{use Lexical::Var '$foo' => \1.5; $foo if 0;};
+is $@, "";
+eval q{use Lexical::Var '$foo' => \[]; $foo if 0;};
+is $@, "";
+eval q{use Lexical::Var '$foo' => \"abc"; $foo if 0;};
+is $@, "";
+eval q{use Lexical::Var '$foo' => bless(\(my$x="abc")); $foo if 0;};
+is $@, "";
+eval q{use Lexical::Var '$foo' => \*main::wibble; $foo if 0;};
+is $@, "";
+eval q{use Lexical::Var '$foo' => bless(\*main::wibble); $foo if 0;};
+is $@, "";
 
 our @values;
 
@@ -376,6 +395,8 @@ eval q{
 is $@, "";
 is_deeply \@values, [ undef, 1 ];
 
+SKIP: { skip "no lexical propagation into string eval", 12 if $] < 5.009003;
+
 @values = ();
 eval q{
 	use strict;
@@ -451,6 +472,8 @@ eval q{
 };
 is $@, "";
 is_deeply \@values, [ 2, 1 ];
+
+}
 
 @values = ();
 eval q{

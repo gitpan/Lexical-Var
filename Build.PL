@@ -1,3 +1,4 @@
+{ use 5.006; }
 use warnings;
 use strict;
 
@@ -5,20 +6,19 @@ use Module::Build;
 
 Module::Build->new(
 	module_name => "Lexical::Var",
-	dist_version => "0.000",
 	license => "perl",
 	build_requires => {
 		"ExtUtils::CBuilder" => "0.15",
 		"Module::Build" => 0,
 		"Test::More" => 0,
-		"perl" => "5.006001",
+		"perl" => "5.006",
 		"strict" => 0,
 		"warnings" => 0,
 	},
 	requires => {
-		"Lexical::SealRequireHints" => 0,
+		"Lexical::SealRequireHints" => "0.001",
 		"XSLoader" => 0,
-		"perl" => "5.006001",
+		"perl" => "5.006",
 		"strict" => 0,
 		"warnings" => 0,
 	},
