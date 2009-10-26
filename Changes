@@ -1,3 +1,33 @@
+version 0.002; 2009-10-26
+
+  * port to Perl 5.11.0, supporting the addition of first-class regexp
+    objects (which are actually a type of scalar) and the removal of
+    the distinct RV type
+
+  * where the compilation %^H and PL_compcv are unavailable due to string
+    eval or similar, detect this earlier and regardless of the type of
+    item being set up (previously it was not detected for subroutines
+    or globs)
+
+  * when a lexical scalar has readonly value, generate a const op instead
+    of the usual rv2sv
+
+  * document the problem of %^H and PL_compcv being unavailable due to
+    string eval
+
+  * preserve op flags when building new rv2Xv ops; this doesn't seem to
+    matter in any currently achievable situation, but will be required
+    for bareword subroutine references in the future
+
+  * in XS, properly parenthesise some macro definitions
+
+  * test writability of lexical variables
+
+  * in t/error.t, check for unexpected warnings
+
+  * add experimental code, all disabled, to support bareword subroutine
+    references on a suitably modified Perl core
+
 version 0.001; 2009-09-30
 
   * bugfix: make array and hash indexing work

@@ -23,14 +23,14 @@
 #endif /* !sv_setpvs */
 
 #ifndef SvPAD_OUR_on
-# define SvPAD_OUR_on(SV) SvFLAGS(SV) |= SVpad_OUR
+# define SvPAD_OUR_on(SV) (SvFLAGS(SV) |= SVpad_OUR)
 #endif /* !SvPAD_OUR_on */
 
 #ifndef SvOURSTASH_set
 # ifdef OURSTASH_set
 #  define SvOURSTASH_set(SV, STASH) OURSTASH_set(SV, STASH)
 # else /* !OURSTASH_set */
-#  define SvOURSTASH_set(SV, STASH) GvSTASH(SV) = STASH
+#  define SvOURSTASH_set(SV, STASH) (GvSTASH(SV) = STASH)
 # endif /* !OURSTASH_set */
 #endif /* !SvOURSTASH_set */
 
@@ -77,9 +77,19 @@ static SV *newSV_type(svtype type)
 # define GV_NOTQUAL 0
 #endif /* !GV_NOTQUAL */
 
+#define sv_is_glob(sv) (SvTYPE(sv) == SVt_PVGV)
+
+#if PERL_VERSION_GE(5,11,0)
+# define sv_is_regexp(sv) (SvTYPE(sv) == SVt_REGEXP)
+#else /* <5.11.0 */
+# define sv_is_regexp(sv) 0
+#endif /* <5.11.0 */
+
 #define sv_is_string(sv) \
-	(SvTYPE(sv) != SVt_PVGV && \
+	(!sv_is_glob(sv) && !sv_is_regexp(sv) && \
 	 (SvFLAGS(sv) & (SVf_IOK|SVf_NOK|SVf_POK|SVp_IOK|SVp_NOK|SVp_POK)))
+
+#define QALLOW_BAREWORD_SUBS 0   /* for experimental use only */
 
 #define KEYPREFIX "Lexical::Var/"
 #define KEYPREFIXLEN (sizeof(KEYPREFIX)-1)
@@ -175,10 +185,12 @@ static OP *ck_rv2xv(pTHX_ OP *o, char sigil, OP *(*nxck)(pTHX_ OP *o))
 		if((he = hv_fetch_ent(GvHV(PL_hintgv), key, 0, 0))) {
 			SV *hintref, *referent, *fake_referent, *newref;
 			OP *newop;
-			U16 type;
+			U16 type, flags;
+#if !QALLOW_BAREWORD_SUBS
 			if(sigil == '&' && (c->op_private & OPpCONST_BARE))
 				croak("can't reference lexical subroutine "
 					"without & sigil (yet)");
+#endif /* !QALLOW_BAREWORD_SUBS */
 			if(sigil != 'P' || !PERL_VERSION_GE(5,8,0)) {
 				/*
 				 * A bogus symbol lookup has already been
@@ -219,6 +231,13 @@ static OP *ck_rv2xv(pTHX_ OP *o, char sigil, OP *(*nxck)(pTHX_ OP *o))
 				croak("non-reference hint for Lexical::Var");
 			referent = SvREFCNT_inc(SvRV(hintref));
 			type = o->op_type;
+			flags = o->op_flags | (((U16)o->op_private) << 8);
+			if(type == OP_RV2SV && sigil == 'P' &&
+					SvPVX(ref)[LEXPADPREFIXLEN] == '$' &&
+					SvREADONLY(referent)) {
+				op_free(o);
+				return newSVOP(OP_CONST, 0, referent);
+			}
 			switch(type) {
 				case OP_RV2SV: fake_referent = fake_sv; break;
 				case OP_RV2AV: fake_referent = fake_av; break;
@@ -230,7 +249,8 @@ static OP *ck_rv2xv(pTHX_ OP *o, char sigil, OP *(*nxck)(pTHX_ OP *o))
 				SvREFCNT_inc(fake_referent);
 				SvREFCNT_inc(newref);
 			}
-			newop = newUNOP(type, 0, newSVOP(OP_CONST, 0, newref));
+			newop = newUNOP(type, flags,
+					newSVOP(OP_CONST, 0, newref));
 			if(referent != fake_referent) {
 				fake_referent = SvRV(newref);
 				SvREADONLY_off(newref);
@@ -243,7 +263,7 @@ static OP *ck_rv2xv(pTHX_ OP *o, char sigil, OP *(*nxck)(pTHX_ OP *o))
 			return newop;
 		} else if(sigil == 'P') {
 			SV *newref;
-			U16 type;
+			U16 type, flags;
 			/*
 			 * Not a name that we have a defined meaning for,
 			 * but it has the form of the "our" hack, implying
@@ -258,8 +278,10 @@ static OP *ck_rv2xv(pTHX_ OP *o, char sigil, OP *(*nxck)(pTHX_ OP *o))
 						SvCUR(ref)-LEXPADPREFIXLEN-3);
 			if(SvUTF8(ref)) SvUTF8_on(newref);
 			type = o->op_type;
+			flags = o->op_flags | (((U16)o->op_private) << 8);
 			op_free(o);
-			return newUNOP(type, 0, newSVOP(OP_CONST, 0, newref));
+			return newUNOP(type, flags,
+				newSVOP(OP_CONST, 0, newref));
 		}
 	}
 	return nxck(aTHX_ o);
@@ -298,14 +320,10 @@ static PADOFFSET pad_max(void)
 #endif /* <5.8.0 */
 }
 
-static void setup_pad(char const *vari_word, char const *name)
+static CV *find_compcv(char const *vari_word)
 {
-	CV *compcv;
 	GV *compgv;
-	AV *padlist, *padname, *padvar;
-	PADOFFSET ouroffset;
-	SV *ourname, *ourvar;
-	HV *stash;
+	CV *compcv;
 	/*
 	 * Given that we're being invoked from a BEGIN block,
 	 * PL_compcv here doesn't actually point to the sub
@@ -320,11 +338,20 @@ static void setup_pad(char const *vari_word, char const *name)
 			(compgv = CvGV(PL_compcv)) &&
 			strEQ(GvNAME(compgv), "BEGIN") &&
 			(compcv = CvOUTSIDE(PL_compcv)) &&
-			(padlist = CvPADLIST(compcv))))
+			CvPADLIST(compcv)))
 		croak("can't set up lexical %s outside compilation",
 			vari_word);
-	padname = (AV*)*av_fetch(padlist, 0, 0);
-	padvar = (AV*)*av_fetch(padlist, 1, 0);
+	return compcv;
+}
+
+static void setup_pad(CV *compcv, char const *name)
+{
+	AV *padlist = CvPADLIST(compcv);
+	AV *padname = (AV*)*av_fetch(padlist, 0, 0);
+	AV *padvar = (AV*)*av_fetch(padlist, 1, 0);
+	PADOFFSET ouroffset;
+	SV *ourname, *ourvar;
+	HV *stash;
 	ourvar = *av_fetch(padvar, AvFILLp(padvar) + 1, 1);
 	SvPADMY_on(ourvar);
 	ouroffset = AvFILLp(padvar);
@@ -355,9 +382,15 @@ static SV *lookup_for_compilation(char base_sigil, char const *vari_word,
 static int svt_scalar(svtype t)
 {
         switch(t) {
-		case SVt_NULL: case SVt_IV: case SVt_NV: case SVt_RV:
+		case SVt_NULL: case SVt_IV: case SVt_NV:
+#if !PERL_VERSION_GE(5,11,0)
+		case SVt_RV:
+#endif /* <5.11.0 */
 		case SVt_PV: case SVt_PVIV: case SVt_PVNV:
 		case SVt_PVMG: case SVt_PVLV: case SVt_PVGV:
+#if PERL_VERSION_GE(5,11,0)
+                case SVt_REGEXP:
+#endif /* >=5.11.0 */
 			return 1;
 		default:
 			return 0;
@@ -367,6 +400,7 @@ static int svt_scalar(svtype t)
 static void import(char base_sigil, char const *vari_word)
 {
 	dXSARGS;
+	CV *compcv;
 	int i;
 	SP -= items;
 	if(items < 1)
@@ -376,6 +410,7 @@ static void import(char base_sigil, char const *vari_word)
 	if(!(items & 1))
 		croak("import list for %"SVf
 			" must alternate name and reference", SVfARG(ST(0)));
+	compcv = find_compcv(vari_word);
 	PL_hints |= HINT_LOCALIZE_HH;
 	gv_HVadd(PL_hintgv);
 	for(i = 1; i != items; i += 2) {
@@ -408,7 +443,7 @@ static void import(char base_sigil, char const *vari_word)
 			SvREFCNT_dec(val);
 		}
 		if(char_attr[(U8)sigil] & CHAR_USEPAD)
-			setup_pad(vari_word, SvPVX(key)+KEYPREFIXLEN);
+			setup_pad(compcv, SvPVX(key)+KEYPREFIXLEN);
 	}
 	PUTBACK;
 }
@@ -416,12 +451,14 @@ static void import(char base_sigil, char const *vari_word)
 static void unimport(char base_sigil, char const *vari_word)
 {
 	dXSARGS;
+	CV *compcv;
 	int i;
 	SP -= items;
 	if(items < 1)
 		croak("too few arguments for unimport");
 	if(items == 1)
 		croak("%"SVf" does no default unimportation", SVfARG(ST(0)));
+	compcv = find_compcv(vari_word);
 	PL_hints |= HINT_LOCALIZE_HH;
 	gv_HVadd(PL_hintgv);
 	for(i = 1; i != items; i++) {
@@ -443,7 +480,7 @@ static void unimport(char base_sigil, char const *vari_word)
 		}
 		hv_delete_ent(GvHV(PL_hintgv), key, G_DISCARD, 0);
 		if(char_attr[(U8)sigil] & CHAR_USEPAD)
-			setup_pad(vari_word, SvPVX(key)+KEYPREFIXLEN);
+			setup_pad(compcv, SvPVX(key)+KEYPREFIXLEN);
 	}
 }
 

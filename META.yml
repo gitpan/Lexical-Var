@@ -1,6 +1,6 @@
 ---
 name: Lexical-Var
-version: 0.001
+version: 0.002
 author:
   - 'Andrew Main (Zefram) <zefram@fysh.org>'
 abstract: static variables without namespace pollution
@@ -24,10 +24,10 @@ dynamic_config: 0
 provides:
   Lexical::Sub:
     file: lib/Lexical/Sub.pm
-    version: 0.001
+    version: 0.002
   Lexical::Var:
     file: lib/Lexical/Var.pm
-    version: 0.001
+    version: 0.002
 generated_by: Module::Build version 0.280801
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

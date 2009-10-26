@@ -47,7 +47,7 @@ package Lexical::Sub;
 use warnings;
 use strict;
 
-our $VERSION = "0.001";
+our $VERSION = "0.002";
 
 require Lexical::Var;
 die "mismatched versions of Lexical::Var and Lexical::Sub modules"
@@ -99,6 +99,15 @@ Package hash entries get created for subroutine names that are used,
 even though the subroutines are not actually being stored or looked
 up in the package.  This can occasionally result in a "used only once"
 warning failing to occur when it should.
+
+If this package's C<import> or C<unimport> method is called from inside 
+a string C<eval> inside a C<BEGIN> block, it does not have proper
+access to the compiling environment, and will complain that it is being
+invoked outside compilation.  Calling from the body of a C<require>d
+or C<do>ed file causes the same problem.  Other kinds of indirection
+within a C<BEGIN> block, such as calling via a normal function, do not
+cause this problem.  Ultimately this is a problem with the Perl core,
+and may change in a future version.
 
 =head1 SEE ALSO
 

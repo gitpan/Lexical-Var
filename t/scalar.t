@@ -1,7 +1,7 @@
 use warnings;
 use strict;
 
-use Test::More tests => 104;
+use Test::More tests => 108;
 
 BEGIN { $^H |= 0x20000 if $] < 5.008; }
 
@@ -27,6 +27,10 @@ is $@, "";
 eval q{use Lexical::Var '$foo' => \*main::wibble;};
 is $@, "";
 eval q{use Lexical::Var '$foo' => bless(\*main::wibble);};
+is $@, "";
+eval q{use Lexical::Var '$foo' => qr/xyz/;};
+is $@, "";
+eval q{use Lexical::Var '$foo' => bless(qr/xyz/);};
 is $@, "";
 eval q{use Lexical::Var '$foo' => [];};
 isnt $@, "";
@@ -56,6 +60,10 @@ is $@, "";
 eval q{use Lexical::Var '$foo' => \*main::wibble; $foo if 0;};
 is $@, "";
 eval q{use Lexical::Var '$foo' => bless(\*main::wibble); $foo if 0;};
+is $@, "";
+eval q{use Lexical::Var '$foo' => qr/xyz/; $foo if 0;};
+is $@, "";
+eval q{use Lexical::Var '$foo' => bless(qr/xyz/); $foo if 0;};
 is $@, "";
 
 our @values;
