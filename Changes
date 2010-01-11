@@ -1,3 +1,14 @@
+version 0.003; 2010-01-11
+
+  * fully support bareword subroutine references on Perl 5.11.2 and later
+
+  * in XS, avoid using "class" as a variable name, for compatibility
+    with C++ compilers
+
+  * correct data type for the PAD_MAX constant
+
+  * in Build.PL, explicitly declare configure-time requirements
+
 version 0.002; 2009-10-26
 
   * port to Perl 5.11.0, supporting the addition of first-class regexp

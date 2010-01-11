@@ -60,7 +60,7 @@ use strict;
 
 use Lexical::SealRequireHints 0.001;
 
-our $VERSION = "0.002";
+our $VERSION = "0.003";
 
 require XSLoader;
 XSLoader::load(__PACKAGE__, $VERSION);
@@ -95,18 +95,18 @@ with that value.
 =head1 BUGS
 
 Subroutine invocations without the C<&> sigil cannot be correctly
-processed by this module.  This is because the parser needs to look up
-the subroutine early, in order to let any prototype affect parsing,
-and it looks up the subroutine by a different mechanism than is used
-to generate the call op.  (Some forms of sigilless call have other
-complications of a similar nature.)  The early lookup is harder to
-intercept, and fixing this will probably require changes to the Perl core.
-If an attempt is made to call a lexical subroutine via a bareword, this
-module will probably still be able to intercept the call op, and will
-throw an exception to indicate that the parsing has gone wrong.  However,
-in some cases compilation goes further wrong before this module can catch
-it, resulting in either a confusing parse error or (in rare situations)
-silent compilation to an incorrect op sequence.
+processed on Perl versions earlier than 5.11.2.  This is because
+the parser needs to look up the subroutine early, in order to let any
+prototype affect parsing, and it looks up the subroutine by a different
+mechanism than is used to generate the call op.  (Some forms of sigilless
+call have other complications of a similar nature.)  If an attempt
+is made to call a lexical subroutine via a bareword on an older Perl,
+this module will probably still be able to intercept the call op, and
+will throw an exception to indicate that the parsing has gone wrong.
+However, in some cases compilation goes further wrong before this
+module can catch it, resulting in either a confusing parse error or
+(in rare situations) silent compilation to an incorrect op sequence.
+On Perl 5.11.2 and later, sigilless subroutine calls work correctly.
 
 Bogus redefinition warnings occur in some cases when C<our> declarations
 and C<Lexical::Var> declarations shadow each other.
@@ -136,7 +136,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2009 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2009, 2010 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 

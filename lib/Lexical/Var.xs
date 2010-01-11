@@ -89,8 +89,6 @@ static SV *newSV_type(svtype type)
 	(!sv_is_glob(sv) && !sv_is_regexp(sv) && \
 	 (SvFLAGS(sv) & (SVf_IOK|SVf_NOK|SVf_POK|SVp_IOK|SVp_NOK|SVp_POK)))
 
-#define QALLOW_BAREWORD_SUBS 0   /* for experimental use only */
-
 #define KEYPREFIX "Lexical::Var/"
 #define KEYPREFIXLEN (sizeof(KEYPREFIX)-1)
 
@@ -186,11 +184,11 @@ static OP *ck_rv2xv(pTHX_ OP *o, char sigil, OP *(*nxck)(pTHX_ OP *o))
 			SV *hintref, *referent, *fake_referent, *newref;
 			OP *newop;
 			U16 type, flags;
-#if !QALLOW_BAREWORD_SUBS
+#if !PERL_VERSION_GE(5,11,2)
 			if(sigil == '&' && (c->op_private & OPpCONST_BARE))
 				croak("can't reference lexical subroutine "
-					"without & sigil (yet)");
-#endif /* !QALLOW_BAREWORD_SUBS */
+					"without & sigil on this perl");
+#endif /* <5.11.2 */
 			if(sigil != 'P' || !PERL_VERSION_GE(5,8,0)) {
 				/*
 				 * A bogus symbol lookup has already been
@@ -301,14 +299,14 @@ static OP *ck_rv2gv(pTHX_ OP*o) { return ck_rv2xv(aTHX_ o, '*', nxck_rv2gv); }
 
 static HV *stash_lex_sv, *stash_lex_av, *stash_lex_hv;
 
-static PADOFFSET pad_max(void)
+static U32 pad_max(void)
 {
 #if PERL_VERSION_GE(5,9,5)
 	return I32_MAX;
 #elif PERL_VERSION_GE(5,9,0)
 	return 999999999;
 #elif PERL_VERSION_GE(5,8,0)
-	static PADOFFSET max;
+	static U32 max;
 	if(!max) {
 		SV *versv = get_sv("]", 0);
 		char *verp = SvPV_nolen(versv);
@@ -500,14 +498,14 @@ BOOT:
 	nxck_rv2gv = PL_check[OP_RV2GV]; PL_check[OP_RV2GV] = ck_rv2gv;
 
 SV *
-_variable_for_compilation(SV *class, SV *name)
+_variable_for_compilation(SV *classname, SV *name)
 CODE:
 	RETVAL = lookup_for_compilation('N', "variable", name);
 OUTPUT:
 	RETVAL
 
 void
-import(SV *class, ...)
+import(SV *classname, ...)
 PPCODE:
 	PUSHMARK(SP);
 	/* the modified SP is intentionally lost here */
@@ -515,7 +513,7 @@ PPCODE:
 	SPAGAIN;
 
 void
-unimport(SV *class, ...)
+unimport(SV *classname, ...)
 PPCODE:
 	PUSHMARK(SP);
 	/* the modified SP is intentionally lost here */
@@ -525,14 +523,14 @@ PPCODE:
 MODULE = Lexical::Var PACKAGE = Lexical::Sub
 
 SV *
-_sub_for_compilation(SV *class, SV *name)
+_sub_for_compilation(SV *classname, SV *name)
 CODE:
 	RETVAL = lookup_for_compilation('&', "subroutine", name);
 OUTPUT:
 	RETVAL
 
 void
-import(SV *class, ...)
+import(SV *classname, ...)
 PPCODE:
 	PUSHMARK(SP);
 	/* the modified SP is intentionally lost here */
@@ -540,7 +538,7 @@ PPCODE:
 	SPAGAIN;
 
 void
-unimport(SV *class, ...)
+unimport(SV *classname, ...)
 PPCODE:
 	PUSHMARK(SP);
 	/* the modified SP is intentionally lost here */

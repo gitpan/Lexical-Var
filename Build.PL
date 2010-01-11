@@ -7,6 +7,10 @@ use Module::Build;
 Module::Build->new(
 	module_name => "Lexical::Var",
 	license => "perl",
+	configure_requires => {
+		"Module::Build" => 0,
+		"perl" => "5.006",
+	},
 	build_requires => {
 		"ExtUtils::CBuilder" => "0.15",
 		"Module::Build" => 0,

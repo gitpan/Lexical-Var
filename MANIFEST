@@ -10,13 +10,14 @@ lib/Lexical/Sub.pm
 lib/Lexical/Var.pm
 lib/Lexical/Var.xs
 t/array.t
-t/baresub.t
 t/code.t
 t/code_0.pm
 t/code_1.pm
 t/code_2.pm
 t/code_3.pm
 t/code_4.pm
+t/code_bare.t
+t/code_bare_no.t
 t/const.t
 t/setup_c.t
 t/setup_c_4.pm
@@ -43,5 +44,7 @@ t/scalar_3.pm
 t/scalar_4.pm
 t/scalar_4n.pm
 t/sub.t
+t/sub_bare.t
+t/sub_bare_no.t
 t/write.t
 SIGNATURE    Added here by Module::Build

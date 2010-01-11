@@ -1,7 +1,7 @@
 use warnings;
 use strict;
 
-use Test::More tests => 102;
+use Test::More tests => 90;
 
 BEGIN { $^H |= 0x20000 if $] < 5.008; }
 
@@ -394,42 +394,6 @@ eval q{
 is $@, "";
 is_deeply \@values, [ 11 ];
 
-{ local $TODO = "bareword ref without parens works funny";
-@values = ();
-eval q{
-	use Lexical::Sub foo => sub () { 1 };
-	push @values, foo;
-};
-like $@, qr/\Acan't reference lexical subroutine without \& sigil/;
-is_deeply \@values, [];
-}
-
-@values = ();
-eval q{
-	use Lexical::Sub foo => sub () { 1 };
-	push @values, foo();
-};
-like $@, qr/\Acan't reference lexical subroutine without \& sigil/;
-is_deeply \@values, [];
-
-{ local $TODO = "bareword ref without parens works funny";
-@values = ();
-eval q{
-	use Lexical::Sub foo => sub ($) { 1+$_[0] };
-	push @values, foo 10;
-};
-like $@, qr/\Acan't reference lexical subroutine without \& sigil/;
-is_deeply \@values, [];
-}
-
-@values = ();
-eval q{
-	use Lexical::Sub foo => sub ($) { 1+$_[0] };
-	push @values, foo(10);
-};
-like $@, qr/\Acan't reference lexical subroutine without \& sigil/;
-is_deeply \@values, [];
-
 @values = ();
 eval q{
 	use Lexical::Sub bar => sub () { 1 };
@@ -445,23 +409,5 @@ eval q{
 };
 is $@, "";
 is_deeply \@values, [ 1 ];
-
-{ local $TODO = "constant subs work funny";
-@values = ();
-eval q{
-	use Lexical::Sub bar => sub () { 1 };
-	push @values, bar;
-};
-like $@, qr/\Acan't reference lexical subroutine without \& sigil/;
-is_deeply \@values, [];
-
-@values = ();
-eval q{
-	use Lexical::Sub bar => sub () { 1 };
-	push @values, bar();
-};
-like $@, qr/\Acan't reference lexical subroutine without \& sigil/;
-is_deeply \@values, [];
-}
 
 1;

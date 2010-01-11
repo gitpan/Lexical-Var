@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.55.
+signed via the Module::Signature module, version 0.61.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -15,24 +15,25 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 9509770e255da80ee243c16964ea0a451de0bbe9 .cvsignore
-SHA1 05a3b6729f9d924b72a9b5b267f23e66fb7d64d0 Build.PL
-SHA1 71933e31a3961821b04e8b26da7515efda98f08f Changes
-SHA1 85969ad0c23f68c700b881064965741825517c44 MANIFEST
-SHA1 5ff9377e188b4caab5d426317b3257de817dd012 META.yml
-SHA1 6935d4c89ba1946c26e1bdbddc7c16d3929e5f7a Makefile.PL
-SHA1 db068f97043f671af315edab316f99251584e1b8 README
+SHA1 238aa58cea87a96c46c83ff0f8ff1c36d214fcfb Build.PL
+SHA1 00e03ce47f2ede62ef5bf2677036d942f735a017 Changes
+SHA1 2b511b7e3246f57bcea9264c38a90a25c6c6aa10 MANIFEST
+SHA1 6116636269e7c6f1eae8fc5e7275237906f8fabe META.yml
+SHA1 d39920327629f6bbea6ff08aa9f54ccc56e7cfbc Makefile.PL
+SHA1 e71643e53007c84785e25a3e28442080bc14a9e0 README
 SHA1 7d8cdcfe8bfcce581e89db9e335dc28491ba1275 lib/Lexical/.cvsignore
-SHA1 6be12fdc31c129e113fd27a61bcb76c98d8ee6fa lib/Lexical/Sub.pm
-SHA1 592e0004379888baaa3acc9b16b07433bb0aa2f9 lib/Lexical/Var.pm
-SHA1 70ac5c996c3d8f6cf0db730bb61f4c279c209c43 lib/Lexical/Var.xs
+SHA1 f23eac17f2fdcecad9fcc2bd19d8c7d55f68e42f lib/Lexical/Sub.pm
+SHA1 23fc7633e79c7385e81031771317e65c6c7d0f14 lib/Lexical/Var.pm
+SHA1 0365e5154a59800996514844c182d61c1822d6f3 lib/Lexical/Var.xs
 SHA1 951235f31d745430292f99ec62306794dd02dc9a t/array.t
-SHA1 938318bf5ea929b031c911fa14010b60124b6993 t/baresub.t
-SHA1 7e3675b04d84f2f55fd2dd143dd4c480e79f5dd8 t/code.t
+SHA1 13b2383af98672ad6c76048e804ff967d76dab20 t/code.t
 SHA1 b77592056c0eb1627a2eadcfd14ec49e6f98609c t/code_0.pm
 SHA1 fb4de8af68a858176ba2ad1f43ac86f3af383ec0 t/code_1.pm
 SHA1 53219d481b83de70ef66cac5e21488a731a96420 t/code_2.pm
 SHA1 716352815b6196af50f29868d8cbdb9e945f697e t/code_3.pm
 SHA1 31356e0540b696cfbaca328e598e50283e0009fc t/code_4.pm
+SHA1 af1d5cbb71d9cf4822c3846a4cb0e5d27421a40d t/code_bare.t
+SHA1 3470b0b27f8ff88115d7bc849ab4da3cf214c26b t/code_bare_no.t
 SHA1 83085d73dce3a8578e56d3174bf5816c099fd34d t/const.t
 SHA1 d1abdc4a67dd1ed3ed4aef9aa1370ac5f389a131 t/error.t
 SHA1 a4eebc0d1690c79209ccef79834591050272c7d1 t/glob.t
@@ -58,12 +59,14 @@ SHA1 fbc2feacfadd5535a8b43bd598a91cbac3d95bc4 t/setup_s_4.pm
 SHA1 739e4ba1b6fe5b32000325d9161e3a4f42a8d161 t/setup_s_5.pm
 SHA1 1986a8ff907a30ba2f4c45d9418479c48ae6ee4b t/setup_s_6.pm
 SHA1 3bc1b399ba8d2c685daf9ecf54c4d853e653a46c t/setup_s_7.pm
-SHA1 968defe4789e486df9dd4263888d5b08cfd385d7 t/sub.t
+SHA1 9a75593cac68618af8c98833a88cfae10e6ff18f t/sub.t
+SHA1 6d8777fa7f7e2b79d2d6c241643c53a0d7a085a5 t/sub_bare.t
+SHA1 c11cc7f83d2c4348f18c918bd83760bf3e65a1e2 t/sub_bare_no.t
 SHA1 200b47e9808ea910d7bad0a403ccae1456c41058 t/write.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkrmMRQACgkQOV9mt2VyAVHeHgCdHUBehBTnVccURk9EHKJ4KZfB
-M6oAoKpurTR7U5VjThMcpihW7FY/1mTM
-=CdQA
+iEYEARECAAYFAktLqbIACgkQOV9mt2VyAVEv3wCdHhHufn3DopR3GBz2dtI3AY0B
+AgAAnjkOybqU26ySjK0TYdvQ7VkdG9w+
+=jEP0
 -----END PGP SIGNATURE-----

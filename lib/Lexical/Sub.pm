@@ -14,8 +14,9 @@ be used directly, it is mainly intended to be infrastructure for modules
 that export subroutines.
 
 This module influences the meaning of single-part subroutine names that
-appear directly in code, such as "C<&foo>".  Normally, in the absence of
-any particular declaration, this would refer to the subroutine of that
+appear directly in code, such as "C<&foo>" and "C<foo(123)>".
+Normally, in the absence of
+any particular declaration, these would refer to the subroutine of that
 name located in the current package.  A C<Lexical::Sub> declaration
 can change this to refer to any particular subroutine, bypassing the
 package system entirely.  A subroutine name that includes an explicit
@@ -24,9 +25,9 @@ in the specified package, and is unaffected by this module.  A symbolic
 reference through a string value, such as "C<&{'foo'}>", also looks in
 the package system, and so is unaffected by this module.
 
-Bareword references to subroutines, such as "C<foo(123)>", cannot
-currently be handled by this module.  You must use the C<&> sigil, as in
-"C<&foo(123)>".
+Bareword references to subroutines, such as "C<foo(123)>", only work on
+Perl 5.11.2 and later.  On earlier Perls you must use the C<&> sigil,
+as in "C<&foo(123)>".
 
 A name definition supplied by this module takes effect from the end of the
 definition statement up to the end of the immediately enclosing block,
@@ -47,7 +48,7 @@ package Lexical::Sub;
 use warnings;
 use strict;
 
-our $VERSION = "0.002";
+our $VERSION = "0.003";
 
 require Lexical::Var;
 die "mismatched versions of Lexical::Var and Lexical::Sub modules"
@@ -82,18 +83,18 @@ that subroutine.
 =head1 BUGS
 
 Subroutine invocations without the C<&> sigil cannot be correctly
-processed by this module.  This is because the parser needs to look up
-the subroutine early, in order to let any prototype affect parsing,
-and it looks up the subroutine by a different mechanism than is used
-to generate the call op.  (Some forms of sigilless call have other
-complications of a similar nature.)  The early lookup is harder to
-intercept, and fixing this will probably require changes to the Perl core.
-If an attempt is made to call a lexical subroutine via a bareword, this
-module will probably still be able to intercept the call op, and will
-throw an exception to indicate that the parsing has gone wrong.  However,
-in some cases compilation goes further wrong before this module can catch
-it, resulting in either a confusing parse error or (in rare situations)
-silent compilation to an incorrect op sequence.
+processed on Perl versions earlier than 5.11.2.  This is because
+the parser needs to look up the subroutine early, in order to let any
+prototype affect parsing, and it looks up the subroutine by a different
+mechanism than is used to generate the call op.  (Some forms of sigilless
+call have other complications of a similar nature.)  If an attempt
+is made to call a lexical subroutine via a bareword on an older Perl,
+this module will probably still be able to intercept the call op, and
+will throw an exception to indicate that the parsing has gone wrong.
+However, in some cases compilation goes further wrong before this
+module can catch it, resulting in either a confusing parse error or
+(in rare situations) silent compilation to an incorrect op sequence.
+On Perl 5.11.2 and later, sigilless subroutine calls work correctly.
 
 Package hash entries get created for subroutine names that are used,
 even though the subroutines are not actually being stored or looked
@@ -119,7 +120,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2009 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2009, 2010 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 
