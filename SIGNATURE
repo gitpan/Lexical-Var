@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.61.
+signed via the Module::Signature module, version 0.63.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -14,17 +14,17 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 9509770e255da80ee243c16964ea0a451de0bbe9 .cvsignore
-SHA1 238aa58cea87a96c46c83ff0f8ff1c36d214fcfb Build.PL
-SHA1 00e03ce47f2ede62ef5bf2677036d942f735a017 Changes
+SHA1 2bc0b42468ab28936c758b43656fb56c2ba5a66d .cvsignore
+SHA1 8795bb59e83f84e000a409edc6c4255359413870 Build.PL
+SHA1 83cd61f889818760c1561c5c4074e7be5b52bb67 Changes
 SHA1 2b511b7e3246f57bcea9264c38a90a25c6c6aa10 MANIFEST
-SHA1 6116636269e7c6f1eae8fc5e7275237906f8fabe META.yml
-SHA1 d39920327629f6bbea6ff08aa9f54ccc56e7cfbc Makefile.PL
+SHA1 41b8b183b448d02fe26e54627044e072e5b2c79c META.yml
+SHA1 caae608231ffe78390c76451ade51a7cfc87a9f9 Makefile.PL
 SHA1 e71643e53007c84785e25a3e28442080bc14a9e0 README
 SHA1 7d8cdcfe8bfcce581e89db9e335dc28491ba1275 lib/Lexical/.cvsignore
-SHA1 f23eac17f2fdcecad9fcc2bd19d8c7d55f68e42f lib/Lexical/Sub.pm
-SHA1 23fc7633e79c7385e81031771317e65c6c7d0f14 lib/Lexical/Var.pm
-SHA1 0365e5154a59800996514844c182d61c1822d6f3 lib/Lexical/Var.xs
+SHA1 e845a3ec179fb4f577030f5ecf40b25dc9b5b7b6 lib/Lexical/Sub.pm
+SHA1 d1ff497340476f98bfa733b8b18f26265eeb5d61 lib/Lexical/Var.pm
+SHA1 74dd418f733f63b4130e3c8eba40c7b5677b033a lib/Lexical/Var.xs
 SHA1 951235f31d745430292f99ec62306794dd02dc9a t/array.t
 SHA1 13b2383af98672ad6c76048e804ff967d76dab20 t/code.t
 SHA1 b77592056c0eb1627a2eadcfd14ec49e6f98609c t/code_0.pm
@@ -66,7 +66,7 @@ SHA1 200b47e9808ea910d7bad0a403ccae1456c41058 t/write.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAktLqbIACgkQOV9mt2VyAVEv3wCdHhHufn3DopR3GBz2dtI3AY0B
-AgAAnjkOybqU26ySjK0TYdvQ7VkdG9w+
-=jEP0
+iEYEARECAAYFAkvBdlMACgkQOV9mt2VyAVFP0QCcDaVw+kAZTUgF72amBK5r7Bha
+16EAn34vANhBz8W8pKxQYhrQbxxncjyN
+=U/TK
 -----END PGP SIGNATURE-----

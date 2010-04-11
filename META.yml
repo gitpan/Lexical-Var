@@ -14,7 +14,7 @@ configure_requires:
   perl: 5.006
 distribution_type: module
 dynamic_config: 0
-generated_by: 'Module::Build version 0.3601'
+generated_by: 'Module::Build version 0.3607'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -23,16 +23,16 @@ name: Lexical-Var
 provides:
   Lexical::Sub:
     file: lib/Lexical/Sub.pm
-    version: 0.003
+    version: 0.004
   Lexical::Var:
     file: lib/Lexical/Var.pm
-    version: 0.003
+    version: 0.004
 requires:
-  Lexical::SealRequireHints: 0.001
+  Lexical::SealRequireHints: 0.003
   XSLoader: 0
   perl: 5.006
   strict: 0
   warnings: 0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.003
+version: 0.004

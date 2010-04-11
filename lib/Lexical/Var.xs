@@ -170,7 +170,8 @@ static void gv_mark_multi(SV *name)
 
 static SV *fake_sv, *fake_av, *fake_hv;
 
-static OP *ck_rv2xv(pTHX_ OP *o, char sigil, OP *(*nxck)(pTHX_ OP *o))
+#define ck_rv2xv(o, sigil, nxck) THX_ck_rv2xv(aTHX_ o, sigil, nxck)
+static OP *THX_ck_rv2xv(pTHX_ OP *o, char sigil, OP *(*nxck)(pTHX_ OP *o))
 {
 	OP *c;
 	SV *ref, *key;
@@ -291,11 +292,11 @@ static OP *(*nxck_rv2hv)(pTHX_ OP *o);
 static OP *(*nxck_rv2cv)(pTHX_ OP *o);
 static OP *(*nxck_rv2gv)(pTHX_ OP *o);
 
-static OP *ck_rv2sv(pTHX_ OP*o) { return ck_rv2xv(aTHX_ o, 'P', nxck_rv2sv); }
-static OP *ck_rv2av(pTHX_ OP*o) { return ck_rv2xv(aTHX_ o, 'P', nxck_rv2av); }
-static OP *ck_rv2hv(pTHX_ OP*o) { return ck_rv2xv(aTHX_ o, 'P', nxck_rv2hv); }
-static OP *ck_rv2cv(pTHX_ OP*o) { return ck_rv2xv(aTHX_ o, '&', nxck_rv2cv); }
-static OP *ck_rv2gv(pTHX_ OP*o) { return ck_rv2xv(aTHX_ o, '*', nxck_rv2gv); }
+static OP *ck_rv2sv(pTHX_ OP *o) { return ck_rv2xv(o, 'P', nxck_rv2sv); }
+static OP *ck_rv2av(pTHX_ OP *o) { return ck_rv2xv(o, 'P', nxck_rv2av); }
+static OP *ck_rv2hv(pTHX_ OP *o) { return ck_rv2xv(o, 'P', nxck_rv2hv); }
+static OP *ck_rv2cv(pTHX_ OP *o) { return ck_rv2xv(o, '&', nxck_rv2cv); }
+static OP *ck_rv2gv(pTHX_ OP *o) { return ck_rv2xv(o, '*', nxck_rv2gv); }
 
 static HV *stash_lex_sv, *stash_lex_av, *stash_lex_hv;
 

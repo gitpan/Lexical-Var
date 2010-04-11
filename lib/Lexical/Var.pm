@@ -58,9 +58,9 @@ package Lexical::Var;
 use warnings;
 use strict;
 
-use Lexical::SealRequireHints 0.001;
+use Lexical::SealRequireHints 0.003;
 
-our $VERSION = "0.003";
+our $VERSION = "0.004";
 
 require XSLoader;
 XSLoader::load(__PACKAGE__, $VERSION);
@@ -128,6 +128,7 @@ and may change in a future version.
 =head1 SEE ALSO
 
 L<Attribute::Lexical>,
+L<Lexical::Import>,
 L<Lexical::Sub>
 
 =head1 AUTHOR

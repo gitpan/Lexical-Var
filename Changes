@@ -1,3 +1,16 @@
+version 0.004; 2010-04-11
+
+  * bugfix: require bugfixed version of Lexical::SealRequireHints (for
+    passing package through to required code in pure-Perl version of
+    Lexical::SealRequireHints)
+
+  * in XS, use macros to avoid explicit passing of aTHX, in the manner
+    of the core
+
+  * add Lexical::Import to "see also" list
+
+  * add MYMETA.yml to .cvsignore
+
 version 0.003; 2010-01-11
 
   * fully support bareword subroutine references on Perl 5.11.2 and later

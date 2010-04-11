@@ -48,7 +48,7 @@ package Lexical::Sub;
 use warnings;
 use strict;
 
-our $VERSION = "0.003";
+our $VERSION = "0.004";
 
 require Lexical::Var;
 die "mismatched versions of Lexical::Var and Lexical::Sub modules"
@@ -112,6 +112,7 @@ and may change in a future version.
 
 =head1 SEE ALSO
 
+L<Lexical::Import>,
 L<Lexical::Var>
 
 =head1 AUTHOR

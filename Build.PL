@@ -20,7 +20,7 @@ Module::Build->new(
 		"warnings" => 0,
 	},
 	requires => {
-		"Lexical::SealRequireHints" => "0.001",
+		"Lexical::SealRequireHints" => "0.003",
 		"XSLoader" => 0,
 		"perl" => "5.006",
 		"strict" => 0,
