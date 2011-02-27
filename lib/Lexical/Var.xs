@@ -1,3 +1,4 @@
+#define PERL_NO_GET_CONTEXT 1
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
@@ -21,6 +22,10 @@
 #ifndef sv_setpvs
 # define sv_setpvs(SV, STR) sv_setpvn(SV, ""STR"", sizeof(STR)-1)
 #endif /* !sv_setpvs */
+
+#ifndef gv_stashpvs
+# define gv_stashpvs(name, flags) gv_stashpvn(""name"", sizeof(name)-1, flags)
+#endif /* !gv_stashpvs */
 
 #ifndef SvPAD_OUR_on
 # define SvPAD_OUR_on(SV) (SvFLAGS(SV) |= SVpad_OUR)
@@ -61,10 +66,11 @@
 #endif /* !SvRV_set */
 
 #ifndef newSV_type
-static SV *newSV_type(svtype type)
+# define newSV_type(type) THX_newSV_type(aTHX_ type)
+static SV *THX_newSV_type(pTHX_ svtype type)
 {
 	SV *sv = newSV(0);
-	SvUPGRADE(sv, type);
+	(void) SvUPGRADE(sv, type);
 	return sv;
 }
 #endif /* !newSV_type */
@@ -127,7 +133,8 @@ static U8 char_attr[256] = {
 	0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
 };
 
-static SV *name_key(char sigil, SV *name)
+#define name_key(sigil, name) THX_name_key(aTHX_ sigil, name)
+static SV *THX_name_key(pTHX_ char sigil, SV *name)
 {
 	char const *p, *q, *end;
 	STRLEN len;
@@ -156,7 +163,8 @@ static SV *name_key(char sigil, SV *name)
 	return key;
 }
 
-static void gv_mark_multi(SV *name)
+#define gv_mark_multi(name) THX_gv_mark_multi(aTHX_ name)
+static void THX_gv_mark_multi(pTHX_ SV *name)
 {
 	GV *gv;
 #ifdef gv_fetchsv
@@ -300,9 +308,12 @@ static OP *ck_rv2gv(pTHX_ OP *o) { return ck_rv2xv(o, '*', nxck_rv2gv); }
 
 static HV *stash_lex_sv, *stash_lex_av, *stash_lex_hv;
 
-static U32 pad_max(void)
+#define pad_max() THX_pad_max(aTHX)
+static U32 THX_pad_max(pTHX)
 {
-#if PERL_VERSION_GE(5,9,5)
+#if PERL_VERSION_GE(5,13,10)
+	return U32_MAX;
+#elif PERL_VERSION_GE(5,9,5)
 	return I32_MAX;
 #elif PERL_VERSION_GE(5,9,0)
 	return 999999999;
@@ -319,7 +330,8 @@ static U32 pad_max(void)
 #endif /* <5.8.0 */
 }
 
-static CV *find_compcv(char const *vari_word)
+#define find_compcv(vari_word) THX_find_compcv(aTHX_ vari_word)
+static CV *THX_find_compcv(pTHX_ char const *vari_word)
 {
 	GV *compgv;
 	CV *compcv;
@@ -343,7 +355,8 @@ static CV *find_compcv(char const *vari_word)
 	return compcv;
 }
 
-static void setup_pad(CV *compcv, char const *name)
+#define setup_pad(compcv, name) THX_setup_pad(aTHX_ compcv, name)
+static void THX_setup_pad(pTHX_ CV *compcv, char const *name)
 {
 	AV *padlist = CvPADLIST(compcv);
 	AV *padname = (AV*)*av_fetch(padlist, 0, 0);
@@ -366,8 +379,10 @@ static void setup_pad(CV *compcv, char const *name)
 	av_store(padname, ouroffset, ourname);
 }
 
-static SV *lookup_for_compilation(char base_sigil, char const *vari_word,
-	SV *name)
+#define lookup_for_compilation(base_sigil, vari_word, name) \
+	THX_lookup_for_compilation(aTHX_ base_sigil, vari_word, name)
+static SV *THX_lookup_for_compilation(pTHX_ char base_sigil,
+	char const *vari_word, SV *name)
 {
 	SV *key;
 	HE *he;
@@ -396,7 +411,8 @@ static int svt_scalar(svtype t)
 	}
 }
 
-static void import(char base_sigil, char const *vari_word)
+#define import(base_sigil, vari_word) THX_import(aTHX_ base_sigil, vari_word)
+static void THX_import(pTHX_ char base_sigil, char const *vari_word)
 {
 	dXSARGS;
 	CV *compcv;
@@ -431,6 +447,7 @@ static void import(char base_sigil, char const *vari_word)
 			case '%': rok = rt == SVt_PVHV; vt="hash";   break;
 			case '&': rok = rt == SVt_PVCV; vt="code";   break;
 			case '*': rok = rt == SVt_PVGV; vt="glob";   break;
+			default:  rok = 0; vt = "wibble"; break;
 		}
 		if(!rok) croak("%s is not %s reference", vari_word, vt);
 		val = newRV_inc(SvRV(ref));
@@ -447,7 +464,9 @@ static void import(char base_sigil, char const *vari_word)
 	PUTBACK;
 }
 
-static void unimport(char base_sigil, char const *vari_word)
+#define unimport(base_sigil, vari_word) \
+	THX_unimport(aTHX_ base_sigil, vari_word)
+static void THX_unimport(pTHX_ char base_sigil, char const *vari_word)
 {
 	dXSARGS;
 	CV *compcv;
@@ -477,7 +496,7 @@ static void unimport(char base_sigil, char const *vari_word)
 			if(SvROK(cref) && SvRV(cref) != SvRV(ref))
 				continue;
 		}
-		hv_delete_ent(GvHV(PL_hintgv), key, G_DISCARD, 0);
+		(void) hv_delete_ent(GvHV(PL_hintgv), key, G_DISCARD, 0);
 		if(char_attr[(U8)sigil] & CHAR_USEPAD)
 			setup_pad(compcv, SvPVX(key)+KEYPREFIXLEN);
 	}
@@ -485,13 +504,15 @@ static void unimport(char base_sigil, char const *vari_word)
 
 MODULE = Lexical::Var PACKAGE = Lexical::Var
 
+PROTOTYPES: DISABLE
+
 BOOT:
 	fake_sv = &PL_sv_undef;
 	fake_av = (SV*)newAV();
 	fake_hv = (SV*)newHV();
-	stash_lex_sv = gv_stashpv(LEXPADPREFIX"$", 1);
-	stash_lex_av = gv_stashpv(LEXPADPREFIX"@", 1);
-	stash_lex_hv = gv_stashpv(LEXPADPREFIX"%", 1);
+	stash_lex_sv = gv_stashpvs(LEXPADPREFIX"$", 1);
+	stash_lex_av = gv_stashpvs(LEXPADPREFIX"@", 1);
+	stash_lex_hv = gv_stashpvs(LEXPADPREFIX"%", 1);
 	nxck_rv2sv = PL_check[OP_RV2SV]; PL_check[OP_RV2SV] = ck_rv2sv;
 	nxck_rv2av = PL_check[OP_RV2AV]; PL_check[OP_RV2AV] = ck_rv2av;
 	nxck_rv2hv = PL_check[OP_RV2HV]; PL_check[OP_RV2HV] = ck_rv2hv;
@@ -501,6 +522,7 @@ BOOT:
 SV *
 _variable_for_compilation(SV *classname, SV *name)
 CODE:
+	PERL_UNUSED_VAR(classname);
 	RETVAL = lookup_for_compilation('N', "variable", name);
 OUTPUT:
 	RETVAL
@@ -508,6 +530,7 @@ OUTPUT:
 void
 import(SV *classname, ...)
 PPCODE:
+	PERL_UNUSED_VAR(classname);
 	PUSHMARK(SP);
 	/* the modified SP is intentionally lost here */
 	import('N', "variable");
@@ -516,6 +539,7 @@ PPCODE:
 void
 unimport(SV *classname, ...)
 PPCODE:
+	PERL_UNUSED_VAR(classname);
 	PUSHMARK(SP);
 	/* the modified SP is intentionally lost here */
 	unimport('N', "variable");
@@ -526,6 +550,7 @@ MODULE = Lexical::Var PACKAGE = Lexical::Sub
 SV *
 _sub_for_compilation(SV *classname, SV *name)
 CODE:
+	PERL_UNUSED_VAR(classname);
 	RETVAL = lookup_for_compilation('&', "subroutine", name);
 OUTPUT:
 	RETVAL
@@ -533,6 +558,7 @@ OUTPUT:
 void
 import(SV *classname, ...)
 PPCODE:
+	PERL_UNUSED_VAR(classname);
 	PUSHMARK(SP);
 	/* the modified SP is intentionally lost here */
 	import('&', "subroutine");
@@ -541,6 +567,7 @@ PPCODE:
 void
 unimport(SV *classname, ...)
 PPCODE:
+	PERL_UNUSED_VAR(classname);
 	PUSHMARK(SP);
 	/* the modified SP is intentionally lost here */
 	unimport('&', "subroutine");

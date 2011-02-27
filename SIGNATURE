@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.63.
+signed via the Module::Signature module, version 0.66.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -15,33 +15,33 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 2bc0b42468ab28936c758b43656fb56c2ba5a66d .cvsignore
-SHA1 8795bb59e83f84e000a409edc6c4255359413870 Build.PL
-SHA1 83cd61f889818760c1561c5c4074e7be5b52bb67 Changes
+SHA1 f92377adf9d2ad19a6978f5a5e96204aa57c99dc Build.PL
+SHA1 45fe5b31e420e87fa5fea1b5fdc703aaab07f8d7 Changes
 SHA1 2b511b7e3246f57bcea9264c38a90a25c6c6aa10 MANIFEST
-SHA1 41b8b183b448d02fe26e54627044e072e5b2c79c META.yml
-SHA1 caae608231ffe78390c76451ade51a7cfc87a9f9 Makefile.PL
-SHA1 e71643e53007c84785e25a3e28442080bc14a9e0 README
+SHA1 ea6ede87d79fe2788b8451d96c75ffdd524db4de META.yml
+SHA1 00afa74f4f1a7f3c8568567ef19487560182e2cd Makefile.PL
+SHA1 ec32a3aef7bdfe1c5a8d2bdf559ceb295142579c README
 SHA1 7d8cdcfe8bfcce581e89db9e335dc28491ba1275 lib/Lexical/.cvsignore
-SHA1 e845a3ec179fb4f577030f5ecf40b25dc9b5b7b6 lib/Lexical/Sub.pm
-SHA1 d1ff497340476f98bfa733b8b18f26265eeb5d61 lib/Lexical/Var.pm
-SHA1 74dd418f733f63b4130e3c8eba40c7b5677b033a lib/Lexical/Var.xs
-SHA1 951235f31d745430292f99ec62306794dd02dc9a t/array.t
-SHA1 13b2383af98672ad6c76048e804ff967d76dab20 t/code.t
+SHA1 7014b872b9647cef1dd3e341c3df9ac6f410c682 lib/Lexical/Sub.pm
+SHA1 bb452be7e02a00edf3c77dd68c26a1550d2280dd lib/Lexical/Var.pm
+SHA1 6fbf91f8b7142d6dd4dba0e3f3c667d095845bee lib/Lexical/Var.xs
+SHA1 460020cc71e0aa867f60c7d80b3260abb2c4e86f t/array.t
+SHA1 5ef37a51f988c155464fcc7d8fc0f31b28fdb755 t/code.t
 SHA1 b77592056c0eb1627a2eadcfd14ec49e6f98609c t/code_0.pm
 SHA1 fb4de8af68a858176ba2ad1f43ac86f3af383ec0 t/code_1.pm
 SHA1 53219d481b83de70ef66cac5e21488a731a96420 t/code_2.pm
 SHA1 716352815b6196af50f29868d8cbdb9e945f697e t/code_3.pm
 SHA1 31356e0540b696cfbaca328e598e50283e0009fc t/code_4.pm
-SHA1 af1d5cbb71d9cf4822c3846a4cb0e5d27421a40d t/code_bare.t
-SHA1 3470b0b27f8ff88115d7bc849ab4da3cf214c26b t/code_bare_no.t
+SHA1 5ac5b6044e3d96cb4441f9028b1aaa0812d7af9d t/code_bare.t
+SHA1 0186e0cb496b2593198991b0640fe58ae0a28ac0 t/code_bare_no.t
 SHA1 83085d73dce3a8578e56d3174bf5816c099fd34d t/const.t
 SHA1 d1abdc4a67dd1ed3ed4aef9aa1370ac5f389a131 t/error.t
-SHA1 a4eebc0d1690c79209ccef79834591050272c7d1 t/glob.t
-SHA1 b1577f85ffee9feded61b1d196f504078457dfdb t/hash.t
+SHA1 77d70db16b78cf3f7f95c8549cc27acf1380f157 t/glob.t
+SHA1 efd3f5537b18367945e4327d32ec66c6066f09e3 t/hash.t
 SHA1 d3edcf44b510808a1e117bb1e58552cb58dbc184 t/once.t
-SHA1 0e141eecf3ca4903ef38d9413b5403a9ddb0392f t/pod_cvg.t
-SHA1 74a957cd8b93f25672ecc6aa578a671d084dd343 t/pod_syn.t
-SHA1 178bbfa89c8c66137f5ce44fbd231f6239096ba1 t/scalar.t
+SHA1 904d9a4f76525e2303e4b0c168c68230f223c8de t/pod_cvg.t
+SHA1 65c75abdef6f01a5d1588a307f2ddfe2333dc961 t/pod_syn.t
+SHA1 a6cecdd46b95a70265f583a2ec797d41606ccabc t/scalar.t
 SHA1 c683d9b6b1d4f3a207f4cbeff67e4be60c4187e5 t/scalar_0.pm
 SHA1 9c9ca0731ddb0d4278a9834c36c09548e2d945c8 t/scalar_0n.pm
 SHA1 14d28314e46fabb424f7783d3ab59e217c6d6581 t/scalar_1.pm
@@ -59,14 +59,14 @@ SHA1 fbc2feacfadd5535a8b43bd598a91cbac3d95bc4 t/setup_s_4.pm
 SHA1 739e4ba1b6fe5b32000325d9161e3a4f42a8d161 t/setup_s_5.pm
 SHA1 1986a8ff907a30ba2f4c45d9418479c48ae6ee4b t/setup_s_6.pm
 SHA1 3bc1b399ba8d2c685daf9ecf54c4d853e653a46c t/setup_s_7.pm
-SHA1 9a75593cac68618af8c98833a88cfae10e6ff18f t/sub.t
-SHA1 6d8777fa7f7e2b79d2d6c241643c53a0d7a085a5 t/sub_bare.t
-SHA1 c11cc7f83d2c4348f18c918bd83760bf3e65a1e2 t/sub_bare_no.t
+SHA1 5380d3d5484851aed9086729edccda10784e24d1 t/sub.t
+SHA1 ddbcd41204c0768c82c737d0b78d34c2de5ea571 t/sub_bare.t
+SHA1 ab806ade319bd0642d7a42f08d4111a7cdc1678b t/sub_bare_no.t
 SHA1 200b47e9808ea910d7bad0a403ccae1456c41058 t/write.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkvBdlMACgkQOV9mt2VyAVFP0QCcDaVw+kAZTUgF72amBK5r7Bha
-16EAn34vANhBz8W8pKxQYhrQbxxncjyN
-=U/TK
+iEYEARECAAYFAk1qdXkACgkQOV9mt2VyAVHmnACfVasYWS6YfozEEWU3UKyX5Lk/
+S/gAnRosRgdCUBDqE18KX3JrB3Q2oklZ
+=8UJO
 -----END PGP SIGNATURE-----

@@ -3,12 +3,12 @@ use strict;
 
 use Test::More tests => 108;
 
-BEGIN { $^H |= 0x20000 if $] < 5.008; }
+BEGIN { $^H |= 0x20000 if "$]" < 5.008; }
 
 $SIG{__WARN__} = sub {
 	return if $_[0] =~ /\AVariable \"\$foo\" is not imported /;
 	return if $_[0] =~ /\AAttempt to free unreferenced scalar[ :]/ &&
-		$] < 5.008004;
+		"$]" < 5.008004;
 	die "WARNING: $_[0]";
 };
 
@@ -403,7 +403,7 @@ eval q{
 is $@, "";
 is_deeply \@values, [ undef, 1 ];
 
-SKIP: { skip "no lexical propagation into string eval", 12 if $] < 5.009003;
+SKIP: { skip "no lexical propagation into string eval", 12 if "$]" < 5.009003;
 
 @values = ();
 eval q{

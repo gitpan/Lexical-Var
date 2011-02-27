@@ -2,14 +2,17 @@ use warnings;
 use strict;
 
 use Test::More;
-BEGIN { plan skip_all => "bare subs impossible on this perl" if $] < 5.011002; }
+BEGIN {
+	plan skip_all => "bare subs impossible on this perl"
+		if "$]" < 5.011002;
+}
 plan tests => 2*10*6;
 
-BEGIN { $^H |= 0x20000 if $] < 5.008; }
+BEGIN { $^H |= 0x20000 if "$]" < 5.008; }
 
 $SIG{__WARN__} = sub {
 	return if $_[0] =~ /\AAttempt to free unreferenced scalar[ :]/ &&
-		$] < 5.008004;
+		"$]" < 5.008004;
 	die "WARNING: $_[0]";
 };
 

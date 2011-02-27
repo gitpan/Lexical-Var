@@ -60,7 +60,7 @@ use strict;
 
 use Lexical::SealRequireHints 0.003;
 
-our $VERSION = "0.004";
+our $VERSION = "0.005";
 
 require XSLoader;
 XSLoader::load(__PACKAGE__, $VERSION);
@@ -137,7 +137,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2009, 2010 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2009, 2010, 2011 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 

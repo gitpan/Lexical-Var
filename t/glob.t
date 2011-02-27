@@ -3,11 +3,11 @@ use strict;
 
 use Test::More tests => 36;
 
-BEGIN { $^H |= 0x20000 if $] < 5.008; }
+BEGIN { $^H |= 0x20000 if "$]" < 5.008; }
 
 $SIG{__WARN__} = sub {
 	return if $_[0] =~ /\AAttempt to free unreferenced scalar[ :]/ &&
-		$] < 5.008004;
+		"$]" < 5.008004;
 	die "WARNING: $_[0]";
 };
 

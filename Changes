@@ -1,3 +1,24 @@
+version 0.005; 2011-02-27
+
+  * port to Perl 5.13.10, where the value of PAD_MAX has changed
+
+  * in XS, use gv_stashpvs() wherever appropriate
+
+  * in XS, use PERL_NO_GET_CONTEXT for efficiency
+
+  * in XS, declare "PROTOTYPES: DISABLE" to prevent automatic generation
+    of unintended prototypes
+
+  * jump through hoops to avoid compiler warnings
+
+  * use full stricture in test suite
+
+  * in test suite, make all numeric comparisons against $] stringify it
+    first, to avoid architecture-dependent problems with floating point
+    rounding giving it an unexpected numeric value
+
+  * in Build.PL, complete declaration of configure-time requirements
+
 version 0.004; 2010-04-11
 
   * bugfix: require bugfixed version of Lexical::SealRequireHints (for
