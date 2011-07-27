@@ -1,3 +1,15 @@
+version 0.006; 2011-07-27
+
+  * bugfix: require bugfixed version of Lexical::SealRequireHints (for
+    working around [perl #73174])
+
+  * in documentation, note problem with indirect object syntax and
+    lexical subroutines
+
+  * include META.json in distribution
+
+  * add MYMETA.json to .cvsignore
+
 version 0.005; 2011-02-27
 
   * port to Perl 5.13.10, where the value of PAD_MAX has changed

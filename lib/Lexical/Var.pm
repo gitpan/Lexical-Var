@@ -58,9 +58,9 @@ package Lexical::Var;
 use warnings;
 use strict;
 
-use Lexical::SealRequireHints 0.003;
+use Lexical::SealRequireHints 0.005;
 
-our $VERSION = "0.005";
+our $VERSION = "0.006";
 
 require XSLoader;
 XSLoader::load(__PACKAGE__, $VERSION);
@@ -106,7 +106,18 @@ will throw an exception to indicate that the parsing has gone wrong.
 However, in some cases compilation goes further wrong before this
 module can catch it, resulting in either a confusing parse error or
 (in rare situations) silent compilation to an incorrect op sequence.
-On Perl 5.11.2 and later, sigilless subroutine calls work correctly.
+On Perl 5.11.2 and later, sigilless subroutine calls work correctly,
+except for an issue noted below.
+
+Subroutine calls that have neither sigil nor parentheses (around the
+argument list) are subject to an ambiguity with indirect object syntax.
+If the first argument expression begins with a bareword or a scalar
+variable reference then the Perl parser is liable to interpret the call as
+an indirect method call.  Normally this syntax would be interpreted as a
+subroutine call if the subroutine exists, but the parser doesn't look at
+lexically-defined subroutines for this purpose.  The call interpretation
+can be forced by prefixing the first argument expression with a C<+>,
+or by wrapping the whole argument list in parentheses.
 
 Bogus redefinition warnings occur in some cases when C<our> declarations
 and C<Lexical::Var> declarations shadow each other.

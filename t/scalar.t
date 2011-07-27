@@ -1,7 +1,7 @@
 use warnings;
 use strict;
 
-use Test::More tests => 108;
+use Test::More tests => 110;
 
 BEGIN { $^H |= 0x20000 if "$]" < 5.008; }
 
@@ -328,6 +328,16 @@ eval q{
 	{
 		no Lexical::Var '$foo' => \1;
 	}
+	push @values, $foo;
+};
+is $@, "";
+is_deeply \@values, [ 1 ];
+
+@values = ();
+eval q{
+	use strict;
+	use Lexical::Var '$foo' => \1;
+	BEGIN { my $x = "foo\x{666}"; $x =~ /foo\p{Alnum}/; }
 	push @values, $foo;
 };
 is $@, "";
