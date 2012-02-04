@@ -83,6 +83,12 @@ static SV *THX_newSV_type(pTHX_ svtype type)
 # define GV_NOTQUAL 0
 #endif /* !GV_NOTQUAL */
 
+/*
+ * scalar classification
+ *
+ * Logic borrowed from Params::Classify.
+ */
+
 #define sv_is_glob(sv) (SvTYPE(sv) == SVt_PVGV)
 
 #if PERL_VERSION_GE(5,11,0)
@@ -94,6 +100,71 @@ static SV *THX_newSV_type(pTHX_ svtype type)
 #define sv_is_string(sv) \
 	(!sv_is_glob(sv) && !sv_is_regexp(sv) && \
 	 (SvFLAGS(sv) & (SVf_IOK|SVf_NOK|SVf_POK|SVp_IOK|SVp_NOK|SVp_POK)))
+
+/*
+ * gen_const_identity_op()
+ *
+ * This function generate op that evaluates to a fixed object identity
+ * and can also participate in constant folding.
+ *
+ * Lexical::Var generally needs to make ops that evaluate to fixed
+ * identities, that being what a name that it handles represents.
+ * Normally it can do this by means of an rv2xv op applied to a const op,
+ * where the const op holds an RV that references the object of interest.
+ * However, rv2xv can't undergo constant folding.  Where the object is
+ * a readonly scalar, we'd like it to take part in constant folding.
+ * The obvious way to make it work as a constant for folding is to use a
+ * const op that directly holds the object.  However, in a Perl built for
+ * ithreads, the value in a const op gets moved into the pad to achieve
+ * clonability, and in the process the value may be copied rather than the
+ * object merely rereferenced.  Generally, the const op only guarantees
+ * to provide a fixed *value*, not a fixed object identity.
+ *
+ * Where a const op might not preserve object identity, we can achieve
+ * preservation by means of a customised variant of the const op.  The op
+ * directly holds an RV that references the object of interest, and its
+ * variant pp function dereferences it (as rv2sv would).  The pad logic
+ * operates on the op structure as normal, and may copy the RV without
+ * preserving its identity, which is OK because the RV isn't what we
+ * need to preserve.  Being labelled as a const op, it is eligible for
+ * constant folding.  When actually executed, it evaluates to the object
+ * of interest, providing both fixed value and fixed identity.
+ */
+
+#ifdef USE_ITHREADS
+# define Q_USE_ITHREADS 1
+#else /* !USE_ITHREADS */
+# define Q_USE_ITHREADS 0
+#endif /* !USE_ITHREADS */
+
+#define Q_CONST_COPIES Q_USE_ITHREADS
+
+#if Q_CONST_COPIES
+static OP *pp_const_via_ref(pTHX)
+{
+	dSP;
+	SV *reference_sv = cSVOPx_sv(PL_op);
+	SV *referent_sv = SvRV(reference_sv);
+	PUSHs(referent_sv);
+	RETURN;
+}
+#endif /* Q_CONST_COPIES */
+
+#define gen_const_identity_op(sv) THX_gen_const_identity_op(aTHX_ sv)
+static OP *THX_gen_const_identity_op(pTHX_ SV *sv)
+{
+#if Q_CONST_COPIES
+	OP *op = newSVOP(OP_CONST, 0, newRV_noinc(sv));
+	op->op_ppaddr = pp_const_via_ref;
+	return op;
+#else /* !Q_CONST_COPIES */
+	return newSVOP(OP_CONST, 0, sv);
+#endif /* !Q_CONST_COPIES */
+}
+
+/*
+ * %^H key names
+ */
 
 #define KEYPREFIX "Lexical::Var/"
 #define KEYPREFIXLEN (sizeof(KEYPREFIX)-1)
@@ -162,6 +233,10 @@ static SV *THX_name_key(pTHX_ char sigil, SV *name)
 	sv_catpvn(key, p, end-p);
 	return key;
 }
+
+/*
+ * compiling code that uses lexical variables
+ */
 
 #define gv_mark_multi(name) THX_gv_mark_multi(aTHX_ name)
 static void THX_gv_mark_multi(pTHX_ SV *name)
@@ -243,7 +318,7 @@ static OP *THX_ck_rv2xv(pTHX_ OP *o, char sigil, OP *(*nxck)(pTHX_ OP *o))
 					SvPVX(ref)[LEXPADPREFIXLEN] == '$' &&
 					SvREADONLY(referent)) {
 				op_free(o);
-				return newSVOP(OP_CONST, 0, referent);
+				return gen_const_identity_op(referent);
 			}
 			switch(type) {
 				case OP_RV2SV: fake_referent = fake_sv; break;
@@ -305,6 +380,10 @@ static OP *ck_rv2av(pTHX_ OP *o) { return ck_rv2xv(o, 'P', nxck_rv2av); }
 static OP *ck_rv2hv(pTHX_ OP *o) { return ck_rv2xv(o, 'P', nxck_rv2hv); }
 static OP *ck_rv2cv(pTHX_ OP *o) { return ck_rv2xv(o, '&', nxck_rv2cv); }
 static OP *ck_rv2gv(pTHX_ OP *o) { return ck_rv2xv(o, '*', nxck_rv2gv); }
+
+/*
+ * setting up lexical names
+ */
 
 static HV *stash_lex_sv, *stash_lex_av, *stash_lex_hv;
 

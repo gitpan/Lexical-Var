@@ -11,7 +11,7 @@ Lexical::Sub - subroutines without namespace pollution
 
 This module implements lexical scoping of subroutines.  Although it can
 be used directly, it is mainly intended to be infrastructure for modules
-that export subroutines.
+that manage namespaces.
 
 This module influences the meaning of single-part subroutine names that
 appear directly in code, such as "C<&foo>" and "C<foo(123)>".
@@ -48,7 +48,7 @@ package Lexical::Sub;
 use warnings;
 use strict;
 
-our $VERSION = "0.006";
+our $VERSION = "0.007";
 
 require Lexical::Var;
 die "mismatched versions of Lexical::Var and Lexical::Sub modules"
@@ -112,14 +112,15 @@ even though the subroutines are not actually being stored or looked
 up in the package.  This can occasionally result in a "used only once"
 warning failing to occur when it should.
 
-If this package's C<import> or C<unimport> method is called from inside 
+On Perls prior to 5.15.5,
+if this package's C<import> or C<unimport> method is called from inside 
 a string C<eval> inside a C<BEGIN> block, it does not have proper
 access to the compiling environment, and will complain that it is being
 invoked outside compilation.  Calling from the body of a C<require>d
-or C<do>ed file causes the same problem.  Other kinds of indirection
+or C<do>ed file causes the same problem
+on the same Perl versions.  Other kinds of indirection
 within a C<BEGIN> block, such as calling via a normal function, do not
-cause this problem.  Ultimately this is a problem with the Perl core,
-and may change in a future version.
+cause this problem.
 
 =head1 SEE ALSO
 
@@ -132,7 +133,8 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2009, 2010, 2011 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2009, 2010, 2011, 2012
+Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 

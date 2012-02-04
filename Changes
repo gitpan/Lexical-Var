@@ -1,3 +1,39 @@
+version 0.007; 2012-02-04
+
+  * bugfix: preserve referential identity of named constant scalars on
+    threading Perl builds
+
+  * bugfix: require bugfixed version of Lexical::SealRequireHints (for
+    compatibility with early-loaded warnings.pm) and invoke it earlier
+    to make sure it takes effect in time
+
+  * in documentation, note the problems that threading Perls have with
+    objects originating from source literals
+
+  * in documentation, note that the problem with eval/require/do inside
+    a BEGIN block is fixed in Perl 5.15.5
+
+  * in documentation, note that constant scalars participate in constant
+    folding
+
+  * fix an outdated documentation note about bareword subroutine calls
+
+  * in documentation, tweak description of intended users
+
+  * additional tests regarding const ops, constant folding, and object
+    identity preservation
+
+  * additional tests for the Lexical::Sub interface
+
+  * in Build.PL, declare incompatibility with pre-0.19
+    B::Hooks::OP::Check, which doesn't play nicely around op check hooking
+
+  * reorganise some of the test suite
+
+  * convert .cvsignore to .gitignore
+
+  * sort MANIFEST
+
 version 0.006; 2011-07-27
 
   * bugfix: require bugfixed version of Lexical::SealRequireHints (for

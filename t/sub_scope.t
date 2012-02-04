@@ -1,7 +1,7 @@
 use warnings;
 use strict;
 
-use Test::More tests => 92;
+use Test::More tests => 62;
 
 BEGIN { $^H |= 0x20000 if "$]" < 5.008; }
 
@@ -11,46 +11,7 @@ $SIG{__WARN__} = sub {
 	die "WARNING: $_[0]";
 };
 
-eval q{use Lexical::Sub foo => \undef;};
-isnt $@, "";
-eval q{use Lexical::Sub foo => \1;};
-isnt $@, "";
-eval q{use Lexical::Sub foo => \1.5;};
-isnt $@, "";
-eval q{use Lexical::Sub foo => \[];};
-isnt $@, "";
-eval q{use Lexical::Sub foo => \"abc";};
-isnt $@, "";
-eval q{use Lexical::Sub foo => bless(\(my$x="abc"));};
-isnt $@, "";
-eval q{use Lexical::Sub foo => \*main::wibble;};
-isnt $@, "";
-eval q{use Lexical::Sub foo => bless(\*main::wibble);};
-isnt $@, "";
-eval q{use Lexical::Sub foo => qr/xyz/;};
-isnt $@, "";
-eval q{use Lexical::Sub foo => bless(qr/xyz/);};
-isnt $@, "";
-eval q{use Lexical::Sub foo => [];};
-isnt $@, "";
-eval q{use Lexical::Sub foo => bless([]);};
-isnt $@, "";
-eval q{use Lexical::Sub foo => {};};
-isnt $@, "";
-eval q{use Lexical::Sub foo => bless({});};
-isnt $@, "";
-eval q{use Lexical::Sub foo => sub{};};
-is $@, "";
-eval q{use Lexical::Sub foo => bless(sub{});};
-is $@, "";
-
-eval q{use Lexical::Sub foo => sub{}; &foo if 0;};
-is $@, "";
-eval q{use Lexical::Sub foo => bless(sub{}); &foo if 0;};
-is $@, "";
-
 sub main::foo { "main" }
-sub main::bar () { "main" }
 sub wibble::foo { "wibble" }
 
 our @values;
@@ -368,55 +329,5 @@ is $@, "";
 is_deeply \@values, [ 2, 1 ];
 
 }
-
-@values = ();
-eval q{
-	use Lexical::Sub foo => sub () { 1 };
-	push @values, &foo;
-};
-is $@, "";
-is_deeply \@values, [ 1 ];
-
-@values = ();
-eval q{
-	use Lexical::Sub foo => sub () { 1 };
-	push @values, &foo();
-};
-is $@, "";
-is_deeply \@values, [ 1 ];
-
-@values = ();
-eval q{
-	use Lexical::Sub foo => sub ($) { 1+$_[0] };
-	push @values, &foo(10);
-	push @values, &foo(20);
-};
-is $@, "";
-is_deeply \@values, [ 11, 21 ];
-
-@values = ();
-eval q{
-	use Lexical::Sub foo => sub ($) { 1+$_[0] };
-	my @a = (10, 20);
-	push @values, &foo(@a);
-};
-is $@, "";
-is_deeply \@values, [ 11 ];
-
-@values = ();
-eval q{
-	use Lexical::Sub bar => sub () { 1 };
-	push @values, &bar;
-};
-is $@, "";
-is_deeply \@values, [ 1 ];
-
-@values = ();
-eval q{
-	use Lexical::Sub bar => sub () { 1 };
-	push @values, &bar();
-};
-is $@, "";
-is_deeply \@values, [ 1 ];
 
 1;

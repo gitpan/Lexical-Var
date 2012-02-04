@@ -4,7 +4,7 @@
       "Andrew Main (Zefram) <zefram@fysh.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110930001",
+   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.112621",
    "license" : [
       "perl_5"
    ],
@@ -33,8 +33,11 @@
          }
       },
       "runtime" : {
+         "conflicts" : {
+            "B::Hooks::OP::Check" : 0
+         },
          "requires" : {
-            "Lexical::SealRequireHints" : "0.005",
+            "Lexical::SealRequireHints" : "0.006",
             "XSLoader" : 0,
             "perl" : "5.006",
             "strict" : 0,
@@ -45,11 +48,11 @@
    "provides" : {
       "Lexical::Sub" : {
          "file" : "lib/Lexical/Sub.pm",
-         "version" : "0.006"
+         "version" : "0.007"
       },
       "Lexical::Var" : {
          "file" : "lib/Lexical/Var.pm",
-         "version" : "0.006"
+         "version" : "0.007"
       }
    },
    "release_status" : "stable",
@@ -58,5 +61,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.006"
+   "version" : "0.007"
 }

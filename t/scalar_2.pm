@@ -1,4 +1,4 @@
 use strict;
-use Lexical::Var '$foo' => \2;
+use Lexical::Var '$foo' => \(my$x=2);
 push @main::values, $foo;
 1;

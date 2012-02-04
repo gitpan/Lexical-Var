@@ -1,7 +1,7 @@
 use warnings;
 use strict;
 
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 BEGIN { $SIG{__WARN__} = sub { die "WARNING: $_[0]" }; }
 
@@ -19,5 +19,8 @@ is_deeply &code, 1;
 
 use Lexical::Var '*glob' => \*x;
 is_deeply *glob, *x;
+
+use Lexical::Sub sub => sub { 1 };
+is_deeply &sub, 1;
 
 1;

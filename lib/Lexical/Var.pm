@@ -15,7 +15,7 @@ Lexical::Var - static variables without namespace pollution
 
 This module implements lexical scoping of static variables and
 subroutines.  Although it can be used directly, it is mainly intended
-to be infrastructure for modules that export particular objects.
+to be infrastructure for modules that manage namespaces.
 
 This module influences the meaning of single-part variable names that
 appear directly in code, such as "C<$foo>".  Normally, in the absence
@@ -35,8 +35,14 @@ array ("C<@foo>"), hash ("C<%foo>"), subroutine ("C<&foo>"), and glob
 that logically refers to the same entity, even when the name is spelled
 without its usual sigil.  For example, any definition of "C<@foo>" affects
 element references such as "C<$foo[0]>".  Barewords in filehandle context
-actually refer to the glob variable.  Bareword references to subroutines
-cannot currently be handled by this module.
+actually refer to the glob variable.  Bareword references to subroutines,
+such as "C<foo(123)>", only work on Perl 5.11.2 and later; on earlier
+Perls you must use the C<&> sigil, as in "C<&foo(123)>".
+
+Where a scalar name is defined to refer to a constant (read-only) scalar,
+references to the constant through the lexical namespace can participate
+in compile-time constant folding.  This can avoid the need to check
+configuration values (such as whether debugging is enabled) at runtime.
 
 A name definition supplied by this module takes effect from the end of the
 definition statement up to the end of the immediately enclosing block,
@@ -55,12 +61,11 @@ variable for each invocation of a function, use C<my>.
 package Lexical::Var;
 
 { use 5.006; }
+use Lexical::SealRequireHints 0.006;
 use warnings;
 use strict;
 
-use Lexical::SealRequireHints 0.005;
-
-our $VERSION = "0.006";
+our $VERSION = "0.007";
 
 require XSLoader;
 XSLoader::load(__PACKAGE__, $VERSION);
@@ -119,6 +124,21 @@ lexically-defined subroutines for this purpose.  The call interpretation
 can be forced by prefixing the first argument expression with a C<+>,
 or by wrapping the whole argument list in parentheses.
 
+On Perls built for threading (even if threading is not actually used),
+scalar constants that are defined by literals in the Perl source don't
+reliably maintain their object identity.  What appear to be multiple
+references to a single object can end up behaving as references
+to multiple objects, in surprising ways.  The multiple objects all
+initially have the correct value, but they can be writable even though the
+original object is a constant.  See Perl bug reports [perl #109744] and
+[perl #109746].  This can affect objects that are placed in the lexical
+namespace, just as it can affect those in package namespaces or elsewhere.
+C<Lexical::Var> avoids contributing to the problem itself, but certain
+ways of building the parameters to C<Lexical::Var> can result in the
+object in the lexical namespace not being the one that was intended,
+or can damage the named object so that later referencing operations on
+it misbehave.
+
 Bogus redefinition warnings occur in some cases when C<our> declarations
 and C<Lexical::Var> declarations shadow each other.
 
@@ -127,14 +147,15 @@ are used, even though the subroutines and globs are not actually being
 stored or looked up in the package.  This can occasionally result in a
 "used only once" warning failing to occur when it should.
 
-If this package's C<import> or C<unimport> method is called from inside
+On Perls prior to 5.15.5,
+if this package's C<import> or C<unimport> method is called from inside
 a string C<eval> inside a C<BEGIN> block, it does not have proper
 access to the compiling environment, and will complain that it is being
 invoked outside compilation.  Calling from the body of a C<require>d
-or C<do>ed file causes the same problem.  Other kinds of indirection
+or C<do>ed file causes the same problem
+on the same Perl versions.  Other kinds of indirection
 within a C<BEGIN> block, such as calling via a normal function, do not
-cause this problem.  Ultimately this is a problem with the Perl core,
-and may change in a future version.
+cause this problem.
 
 =head1 SEE ALSO
 
@@ -148,7 +169,8 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2009, 2010, 2011 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2009, 2010, 2011, 2012
+Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 

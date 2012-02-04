@@ -6,7 +6,7 @@ DESCRIPTION
 
 This module implements lexical scoping of static variables and
 subroutines.  Although it can be used directly, it is mainly intended
-to be infrastructure for modules that export particular objects.
+to be infrastructure for modules that manage namespaces.
 
 This module influences the meaning of single-part variable names that
 appear directly in code, such as "$foo".  Normally, in the absence of any
@@ -25,8 +25,14 @@ A definition for any of these names also affects code that logically
 refers to the same entity, even when the name is spelled without its
 usual sigil.  For example, any definition of "@foo" affects element
 references such as "$foo[0]".  Barewords in filehandle context actually
-refer to the glob variable.  Bareword references to subroutines cannot
-currently be handled by this module.
+refer to the glob variable.  Bareword references to subroutines, such as
+"foo(123)", only work on Perl 5.11.2 and later; on earlier Perls you
+must use the "&" sigil, as in "&foo(123)".
+
+Where a scalar name is defined to refer to a constant (read-only) scalar,
+references to the constant through the lexical namespace can participate
+in compile-time constant folding.  This can avoid the need to check
+configuration values (such as whether debugging is enabled) at runtime.
 
 A name definition supplied by this module takes effect from the end
 of the definition statement up to the end of the immediately enclosing
@@ -53,7 +59,8 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 COPYRIGHT
 
-Copyright (C) 2009, 2010, 2011 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2009, 2010, 2011, 2012
+Andrew Main (Zefram) <zefram@fysh.org>
 
 LICENSE
 
