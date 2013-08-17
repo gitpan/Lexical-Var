@@ -39,6 +39,18 @@
 # endif /* !OURSTASH_set */
 #endif /* !SvOURSTASH_set */
 
+#ifndef PadMAX
+# define PadlistARRAY(pl) ((PAD**)AvARRAY(pl))
+# define PadlistNAMES(pl) (PadlistARRAY(pl)[0])
+# define PadMAX(p) AvFILLp(p)
+typedef AV PADNAMELIST;
+#endif /* !PadMAX */
+
+#if !PERL_VERSION_GE(5,8,1)
+typedef AV PADLIST;
+typedef AV PAD;
+#endif /* <5.8.1 */
+
 #ifndef COP_SEQ_RANGE_LOW
 # if PERL_VERSION_GE(5,9,5)
 #  define COP_SEQ_RANGE_LOW(sv) ((XPVNV*)SvANY(sv))->xnv_u.xpad_cop_seq.xlow
@@ -412,8 +424,12 @@ static U32 THX_pad_max(pTHX)
 #define find_compcv(vari_word) THX_find_compcv(aTHX_ vari_word)
 static CV *THX_find_compcv(pTHX_ char const *vari_word)
 {
-	GV *compgv;
 	CV *compcv;
+#if PERL_VERSION_GE(5,17,5)
+	if(!((compcv = PL_compcv) && CvPADLIST(compcv)))
+		compcv = NULL;
+#else /* <5.17.5 */
+	GV *compgv;
 	/*
 	 * Given that we're being invoked from a BEGIN block,
 	 * PL_compcv here doesn't actually point to the sub
@@ -429,6 +445,9 @@ static CV *THX_find_compcv(pTHX_ char const *vari_word)
 			strEQ(GvNAME(compgv), "BEGIN") &&
 			(compcv = CvOUTSIDE(PL_compcv)) &&
 			CvPADLIST(compcv)))
+		compcv = NULL;
+#endif /* <5.17.5 */
+	if(!compcv)
 		croak("can't set up lexical %s outside compilation",
 			vari_word);
 	return compcv;
@@ -437,15 +456,15 @@ static CV *THX_find_compcv(pTHX_ char const *vari_word)
 #define setup_pad(compcv, name) THX_setup_pad(aTHX_ compcv, name)
 static void THX_setup_pad(pTHX_ CV *compcv, char const *name)
 {
-	AV *padlist = CvPADLIST(compcv);
-	AV *padname = (AV*)*av_fetch(padlist, 0, 0);
-	AV *padvar = (AV*)*av_fetch(padlist, 1, 0);
+	PADLIST *padlist = CvPADLIST(compcv);
+	PADNAMELIST *padname = PadlistNAMES(padlist);
+	PAD *padvar = PadlistARRAY(padlist)[1];
 	PADOFFSET ouroffset;
 	SV *ourname, *ourvar;
 	HV *stash;
-	ourvar = *av_fetch(padvar, AvFILLp(padvar) + 1, 1);
+	ourvar = *av_fetch(padvar, PadMAX(padvar) + 1, 1);
 	SvPADMY_on(ourvar);
-	ouroffset = AvFILLp(padvar);
+	ouroffset = PadMAX(padvar);
 	ourname = newSV_type(SVt_PADNAME);
 	sv_setpv(ourname, name);
 	SvPAD_OUR_on(ourname);

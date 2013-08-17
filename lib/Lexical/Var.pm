@@ -65,7 +65,7 @@ use Lexical::SealRequireHints 0.006;
 use warnings;
 use strict;
 
-our $VERSION = "0.007";
+our $VERSION = "0.008";
 
 require XSLoader;
 XSLoader::load(__PACKAGE__, $VERSION);
@@ -83,6 +83,10 @@ is currently compiling.  Each I<NAME> must be a variable name (e.g.,
 "B<$foo>") including sigil, and each I<REF> must be a reference to a
 variable/value of the appropriate type.  The name is lexically associated
 with the referenced variable/value.
+
+L<Scalar::Construct> can be helpful in generating appropriate I<REF>s,
+especially to create constants.  There are Perl core bugs to beware of
+around compile-time constants; see L</BUGS>.
 
 =item Lexical::Var->unimport(NAME [=> REF], ...)
 
@@ -137,7 +141,7 @@ C<Lexical::Var> avoids contributing to the problem itself, but certain
 ways of building the parameters to C<Lexical::Var> can result in the
 object in the lexical namespace not being the one that was intended,
 or can damage the named object so that later referencing operations on
-it misbehave.
+it misbehave.  L<Scalar::Construct> can be used to avoid this problem.
 
 Bogus redefinition warnings occur in some cases when C<our> declarations
 and C<Lexical::Var> declarations shadow each other.
@@ -161,7 +165,8 @@ cause this problem.
 
 L<Attribute::Lexical>,
 L<Lexical::Import>,
-L<Lexical::Sub>
+L<Lexical::Sub>,
+L<Scalar::Construct>
 
 =head1 AUTHOR
 
@@ -169,7 +174,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2009, 2010, 2011, 2012
+Copyright (C) 2009, 2010, 2011, 2012, 2013
 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE

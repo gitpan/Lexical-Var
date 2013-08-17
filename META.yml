@@ -15,9 +15,9 @@ configure_requires:
   strict: 0
   warnings: 0
 conflicts:
-  B::Hooks::OP::Check: 0
+  B::Hooks::OP::Check: '< 0.19'
 dynamic_config: 0
-generated_by: 'Module::Build version 0.38, CPAN::Meta::Converter version 2.112621'
+generated_by: 'Module::Build version 0.4007, CPAN::Meta::Converter version 2.120921'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -26,10 +26,10 @@ name: Lexical-Var
 provides:
   Lexical::Sub:
     file: lib/Lexical/Sub.pm
-    version: 0.007
+    version: 0.008
   Lexical::Var:
     file: lib/Lexical/Var.pm
-    version: 0.007
+    version: 0.008
 requires:
   Lexical::SealRequireHints: 0.006
   XSLoader: 0
@@ -38,4 +38,4 @@ requires:
   warnings: 0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.007
+version: 0.008

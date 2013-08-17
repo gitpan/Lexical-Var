@@ -1,3 +1,11 @@
+version 0.008; 2013-08-17
+
+  * update for perl 5.17.4's new pad API
+
+  * update for perl 5.17.5's new arrangement for PL_compcv with BEGIN
+
+  * in documentation, refer to the new module Scalar::Construct
+
 version 0.007; 2012-02-04
 
   * bugfix: preserve referential identity of named constant scalars on
