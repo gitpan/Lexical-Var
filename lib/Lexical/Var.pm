@@ -65,7 +65,7 @@ use Lexical::SealRequireHints 0.006;
 use warnings;
 use strict;
 
-our $VERSION = "0.008";
+our $VERSION = "0.009";
 
 require XSLoader;
 XSLoader::load(__PACKAGE__, $VERSION);

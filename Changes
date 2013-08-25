@@ -1,3 +1,7 @@
+version 0.009; 2013-08-25
+
+  * update for perl 5.19.3's tracking of the last named item in a pad
+
 version 0.008; 2013-08-17
 
   * update for perl 5.17.4's new pad API

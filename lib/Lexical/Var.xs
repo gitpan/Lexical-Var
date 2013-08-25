@@ -475,6 +475,9 @@ static void THX_setup_pad(pTHX_ CV *compcv, char const *name)
 	COP_SEQ_RANGE_HIGH_set(ourname, pad_max());
 	PL_cop_seqmax++;
 	av_store(padname, ouroffset, ourname);
+#ifdef PadnamelistMAXNAMED
+	PadnamelistMAXNAMED(padname) = ouroffset;
+#endif /* PadnamelistMAXNAMED */
 }
 
 #define lookup_for_compilation(base_sigil, vari_word, name) \

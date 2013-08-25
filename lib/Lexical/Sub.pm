@@ -48,7 +48,7 @@ package Lexical::Sub;
 use warnings;
 use strict;
 
-our $VERSION = "0.008";
+our $VERSION = "0.009";
 
 require Lexical::Var;
 die "mismatched versions of Lexical::Var and Lexical::Sub modules"

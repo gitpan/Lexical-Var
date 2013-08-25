@@ -48,11 +48,11 @@
    "provides" : {
       "Lexical::Sub" : {
          "file" : "lib/Lexical/Sub.pm",
-         "version" : "0.008"
+         "version" : "0.009"
       },
       "Lexical::Var" : {
          "file" : "lib/Lexical/Var.pm",
-         "version" : "0.008"
+         "version" : "0.009"
       }
    },
    "release_status" : "stable",
@@ -61,5 +61,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.008"
+   "version" : "0.009"
 }
